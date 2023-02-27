@@ -111,6 +111,15 @@ struct FilterPanelView: View {
                 }
             }
             .navigationTitle("筛选和排序")
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        
+                    } label: {
+                        Text("应用")
+                    }
+                }
+            }
         }
     }
 }
