@@ -12,17 +12,24 @@ struct FilterPanelView: View {
     
     @State private var searchTitle = false
     @State private var searchArtist = false
-    @State private var searchCharter = false
     
     @State private var filterPlayedOnly = false
     
-    @State private var filterConstant = true
+    @State private var filterConstant = false
     @State private var filterConstantUpperBound = ""
     @State private var filterConstantLowerBound = ""
     
-    @State private var filterLevel = true
+    @State private var filterLevel = false
     @State private var filterLevelUpperBound = "1"
     @State private var filterLevelLowerBound = "15"
+    
+    @State private var filterGenre = true
+    @State private var filterGenreOptions = ["POPS&ANIME", "niconico", "東方Project", "VARIETY", "イロドリミドリ", "ゲキマイ", "ORIGINAL"]
+    @State private var filterGenreSelection = ["POPS&ANIME"]
+    
+    @State private var filterVersion = true
+    @State private var filterVersionOptions = ["CHUNITHM", "CHUNITHM PLUS", "CHUNITHM AIR", "CHUNITHM AIR PLUS", "CHUNITHM STAR", "CHUNITHM STAR PLUS", "CHUNITHM AMAZON", "CHUNITHM AMAZON PLUS", "CHUNITHM CRYSTAL", "CHUNITHM CRYSTAL PLUS", "CHUNITHM PARADISE", "CHUNITHM PARADISE LOST", "CHUNITHM NEW!!"]
+    @State private var filterVersionSelection = ["CHUNITHM NEW!!"]
     
     @State private var sortOptions = ["按等级", "按定数", "按版本", "按标题"]
     @State private var sortWays = ["升序", "降序"]
@@ -39,9 +46,6 @@ struct FilterPanelView: View {
                     }
                     Toggle(isOn: $searchArtist) {
                         Text("搜索作者")
-                    }
-                    Toggle(isOn: $searchCharter) {
-                        Text("搜索谱师")
                     }
                 } header: {
                     Text("搜索")
@@ -85,7 +89,7 @@ struct FilterPanelView: View {
                             }
                             .pickerStyle(.menu)
                             Text("到")
-                            Picker("", selection: $filterLevelLowerBound) {
+                            Picker("", selection: $filterLevelUpperBound) {
                                 ForEach(1..<7) { text in
                                     Text(String(text))
                                 }
@@ -97,6 +101,20 @@ struct FilterPanelView: View {
                             }
                             .pickerStyle(.menu)
                         }
+                    }
+                    
+                    Toggle(isOn: $filterGenre.animation(.easeInOut(duration: 0.3))) {
+                        Text("筛选分类")
+                    }
+                    if (filterGenre) {
+                        
+                    }
+                    
+                    Toggle(isOn: $filterVersion.animation(.easeInOut(duration: 0.3))) {
+                        Text("筛选版本")
+                    }
+                    if (filterVersion) {
+                        
                     }
                 } header: {
                     Text("筛选")
