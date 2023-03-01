@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct FilterPanelView: View {
-    @Binding var searchText: String
+    @Binding var isOpen: Bool
+    @Binding var shouldFilter: Bool
+    
+    @AppStorage("settingsCurrentMode") var mode = 0
+    
+    @ObservedObject var filter: FilterManager
     
     @State private var searchTitle = false
     @State private var searchArtist = false
@@ -40,44 +45,50 @@ struct FilterPanelView: View {
         NavigationView {
             Form {
                 Section {
-                    TextField("关键词", text: $searchText)
-                    Toggle(isOn: $searchTitle) {
+                    TextField("关键词", text: $filter.filterKeyword)
+                        .autocapitalization(UITextAutocapitalizationType.none)
+                        .disableAutocorrection(true)
+                    
+                    Toggle(isOn: $filter.filterTitle) {
                         Text("搜索标题")
                     }
-                    Toggle(isOn: $searchArtist) {
+                    .disabled(filter.filterKeyword.isEmpty)
+                    
+                    Toggle(isOn: $filter.filterArtist) {
                         Text("搜索作者")
                     }
+                    .disabled(filter.filterKeyword.isEmpty)
                 } header: {
                     Text("搜索")
                 }
                 
                 Section {
-                    Toggle(isOn: $filterPlayedOnly) {
+                    Toggle(isOn: $filter.filterPlayed) {
                         Text("仅显示已游玩曲目")
                     }
-                    Toggle(isOn: $filterConstant.animation(.easeInOut(duration: 0.3))) {
+                    Toggle(isOn: $filter.filterConstant.animation(.easeInOut(duration: 0.3))) {
                         Text("筛选定数")
                     }
-                    if (filterConstant) {
+                    if (filter.filterConstant) {
                         HStack {
                             Text("定数范围")
                             Spacer()
-                            TextField("0.0", text: $filterConstantLowerBound)
+                            TextField("0.0", text: $filter.filterConstantLowerBound)
                                 .frame(width: 35)
                             Text("到")
-                            TextField("0.0", text: $filterConstantUpperBound)
+                            TextField("0.0", text: $filter.filterConstantUpperBound)
                                 .frame(width: 35)
                         }
                         
                     }
-                    Toggle(isOn: $filterLevel.animation(.easeInOut(duration: 0.3))) {
+                    Toggle(isOn: $filter.filterLevel.animation(.easeInOut(duration: 0.3))) {
                         Text("筛选等级")
                     }
-                    if (filterLevel) {
+                    if (filter.filterLevel) {
                         HStack {
                             Text("等级范围")
                             Spacer()
-                            Picker("", selection: $filterLevelLowerBound) {
+                            Picker("", selection: $filter.filterLevelLowerBound) {
                                 ForEach(1..<7) { text in
                                     Text(String(text))
                                 }
@@ -89,7 +100,7 @@ struct FilterPanelView: View {
                             }
                             .pickerStyle(.menu)
                             Text("到")
-                            Picker("", selection: $filterLevelUpperBound) {
+                            Picker("", selection: $filter.filterLevelUpperBound) {
                                 ForEach(1..<7) { text in
                                     Text(String(text))
                                 }
@@ -101,20 +112,35 @@ struct FilterPanelView: View {
                             }
                             .pickerStyle(.menu)
                         }
+                        
                     }
                     
-                    Toggle(isOn: $filterGenre.animation(.easeInOut(duration: 0.3))) {
+                    NavigationLink {
+                        FilterGenreView(genreOptions: filterGenreOptions, filter: filter)
+                    } label: {
                         Text("筛选分类")
-                    }
-                    if (filterGenre) {
-                        
+                        Spacer()
+                        if (filter.filterGenre) {
+                            Text("已选择\(filter.filterGenreSelection.count)项")
+                                .foregroundColor(.gray)
+                        } else {
+                            Text("关闭")
+                                .foregroundColor(.gray)
+                        }
                     }
                     
-                    Toggle(isOn: $filterVersion.animation(.easeInOut(duration: 0.3))) {
+                    NavigationLink {
+                        FilterVersionView(versionOptions: filterVersionOptions, filter: filter)
+                    } label: {
                         Text("筛选版本")
-                    }
-                    if (filterVersion) {
-                        
+                        Spacer()
+                        if (filter.filterVersion) {
+                            Text("已选择\(filter.filterVersionSelection.count)项")
+                                .foregroundColor(.gray)
+                        } else {
+                            Text("关闭")
+                                .foregroundColor(.gray)
+                        }
                     }
                 } header: {
                     Text("筛选")
@@ -127,12 +153,20 @@ struct FilterPanelView: View {
                 } header: {
                     Text("排序")
                 }
+                
+                Button {
+                    
+                } label: {
+                    Text("重置筛选条件")
+                        .foregroundColor(.red)
+                }
             }
             .navigationTitle("筛选和排序")
             .toolbar {
                 ToolbarItem {
                     Button {
-                        
+                        shouldFilter.toggle()
+                        isOpen.toggle()
                     } label: {
                         Text("应用")
                     }
@@ -144,6 +178,84 @@ struct FilterPanelView: View {
 
 struct FilterPanelView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanelView(searchText: .constant(""))
+        FilterPanelView(isOpen: .constant(true), shouldFilter: .constant(false), filter: FilterManager.chunithm)
+    }
+}
+
+struct FilterVersionView: View {
+    let versionOptions: Array<String>
+    
+    @ObservedObject var filter: FilterManager
+    
+    var body: some View {
+        Form {
+            ForEach(versionOptions, id: \.self) { option in
+                HStack {
+                    Text(option)
+                    Spacer()
+                    if (filter.filterVersionSelection.contains(option)) {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if (filter.filterVersionSelection.contains(option)) {
+                        filter.filterVersionSelection.removeAll {
+                            $0 == option
+                        }
+                    } else {
+                        filter.filterVersionSelection.append(option)
+                    }
+                    
+                    if (filter.filterVersionSelection.isEmpty) {
+                        filter.filterVersion = false
+                    } else {
+                        filter.filterVersion = true
+                    }
+                }
+            }
+        }
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct FilterGenreView: View {
+    let genreOptions: Array<String>
+    
+    @ObservedObject var filter: FilterManager
+    
+    var body: some View {
+        Form {
+            ForEach(genreOptions, id: \.self) { option in
+                HStack {
+                    Text(option)
+                    Spacer()
+                    if (filter.filterGenreSelection.contains(option)) {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if (filter.filterGenreSelection.contains(option)) {
+                        filter.filterGenreSelection.removeAll {
+                            $0 == option
+                        }
+                    } else {
+                        filter.filterGenreSelection.append(option)
+                    }
+                    
+                    if (filter.filterGenreSelection.isEmpty) {
+                        filter.filterGenre = false
+                    } else {
+                        filter.filterGenre = true
+                    }
+                }
+            }
+        }
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
