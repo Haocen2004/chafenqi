@@ -32,6 +32,9 @@ struct SongListView: View {
     @State private var decodedMaimaiSongs: Array<MaimaiSongData> = []
     @State private var decodedChunithmSongs: Array<ChunithmSongData> = []
     
+    @State private var filteredMaimaiResults: Array<MaimaiSongData>? = []
+    @State private var filteredChunithmResults: Array<ChunithmSongData>? = []
+    
     @State private var showingDetail = false
     @State private var showingFilterPanel = false
     @State private var showingPlayed = false
@@ -44,9 +47,9 @@ struct SongListView: View {
             
             if (isLoaded) {
                 if (mode == 0) {
-                    if filteredChunithmResults != nil {
+                    if decodedChunithmSongs != nil {
                         List {
-                            ForEach(filteredChunithmResults!.sorted(by: <), id: \.musicId) { song in
+                            ForEach(decodedChunithmSongs.sorted(by: <), id: \.musicId) { song in
                                 NavigationLink {
                                     ChunithmDetailView(song: song)
                                 } label: {
@@ -62,9 +65,9 @@ struct SongListView: View {
                         }
                     }
                 } else {
-                    if filteredMaimaiResults != nil {
+                    if decodedMaimaiSongs != nil {
                         List {
-                            ForEach(filteredMaimaiResults!.sorted(by: <), id: \.musicId) { song in
+                            ForEach(decodedMaimaiSongs.sorted(by: <), id: \.musicId) { song in
                                 NavigationLink {
                                     MaimaiDetailView(song: song)
                                 } label: {
@@ -97,17 +100,8 @@ struct SongListView: View {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
                 .sheet(isPresented: $showingFilterPanel) {
-                    FilterPanelView(isOpen: $showingFilterPanel, shouldFilter: $shouldFilter, filter: mode == 0 ? chuFilter : maiFilter)
+                    FilterPanelView(isOpen: $showingFilterPanel, filteredMaimaiResult: decodedMaimaiSongs, filteredChunithmResult: decodedChunithmSongs, filter: mode == 0 ? chuFilter : maiFilter)
                 }
-//                Menu {
-//                    Toggle(isOn: $showingPlayed) {
-//                        Image(systemName: "rectangle.on.rectangle")
-//                        Text("仅显示已游玩曲目")
-//                    }
-//                    .disabled(!didLogin)
-//                } label: {
-//                    Image(systemName: "line.3.horizontal.decrease.circle")
-//                }
             }
         }
         .onAppear {
@@ -146,65 +140,6 @@ struct SongListView: View {
         .autocapitalization(.none)
         .autocorrectionDisabled(true)
         
-    }
-    
-    var filteredMaimaiResults: Array<MaimaiSongData>? {
-        guard didMaimaiLoaded && mode == 1 else { return nil }
-        
-        do {
-            let songs = try decodedMaimaiSongs.isEmpty ? JSONDecoder().decode(Array<MaimaiSongData>.self, from: loadedMaimaiSongs) :
-            decodedMaimaiSongs
-            
-            if (shouldFilter) {
-                shouldFilter.toggle()
-            }
-            
-            return songs
-        } catch {
-            return nil
-        }
-    }
-    
-    var filteredChunithmResults: Array<ChunithmSongData>? {
-        guard didChunithmLoaded && mode == 0 else { return nil }
-        
-        do {
-            var songs = try decodedChunithmSongs.isEmpty ? JSONDecoder().decode(Array<ChunithmSongData>.self, from: loadedChunithmSongs) :
-            decodedChunithmSongs
-            
-            if (shouldFilter) {
-                if (chuFilter.filterTitle && chuFilter.filterArtist) {
-                    songs = songs.filterTitleAndArtist(keyword: chuFilter.filterKeyword)
-                } else if (chuFilter.filterTitle) {
-                    songs = songs.filterTitle(keyword: chuFilter.filterKeyword)
-                } else if (chuFilter.filterArtist) {
-                    songs = songs.filterArtist(keyword: chuFilter.filterKeyword)
-                }
-                
-                if (chuFilter.filterConstant) {
-                    // TODO: Add ablilty to change level index
-                    songs = songs.filterConstant(levelIndex: 3, lower: Double(chuFilter.filterConstantLowerBound) ?? 0.0, upper: Double(chuFilter.filterConstantUpperBound) ?? 15.4)
-                }
-                
-                if (chuFilter.filterLevel) {
-                    songs = songs.filterLevel(lower: chuFilter.filterLevelLowerBound , upper: chuFilter.filterLevelUpperBound)
-                }
-                
-                if (chuFilter.filterGenre) {
-                    songs = songs.filterGenre(keywords: chuFilter.filterGenreSelection)
-                }
-                
-                if (chuFilter.filterVersion) {
-                    songs = songs.filterVersion(keywords: chuFilter.filterVersionSelection)
-                }
-                
-                shouldFilter.toggle()
-            }
-            
-            return songs
-        } catch {
-            return nil
-        }
     }
 }
 

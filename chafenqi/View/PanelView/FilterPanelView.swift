@@ -9,7 +9,9 @@ import SwiftUI
 
 struct FilterPanelView: View {
     @Binding var isOpen: Bool
-    @Binding var shouldFilter: Bool
+    
+    @State var filteredMaimaiResult: Array<MaimaiSongData>?
+    @State var filteredChunithmResult: Array<ChunithmSongData>?
     
     @AppStorage("settingsCurrentMode") var mode = 0
     
@@ -165,7 +167,11 @@ struct FilterPanelView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
-                        shouldFilter.toggle()
+                        if (mode == 0) {
+                            filteredChunithmResult = filterChunithmSongs()
+                        } else {
+                            
+                        }
                         isOpen.toggle()
                     } label: {
                         Text("应用")
@@ -174,11 +180,43 @@ struct FilterPanelView: View {
             }
         }
     }
+    
+    func filterChunithmSongs() -> Array<ChunithmSongData>? {
+        let chuFilter = filter
+        var songs = filteredChunithmResult
+        
+        if (chuFilter.filterTitle && chuFilter.filterArtist) {
+            songs = songs?.filterTitleAndArtist(keyword: chuFilter.filterKeyword)
+        } else if (chuFilter.filterTitle) {
+            songs = songs?.filterTitle(keyword: chuFilter.filterKeyword)
+        } else if (chuFilter.filterArtist) {
+            songs = songs?.filterArtist(keyword: chuFilter.filterKeyword)
+        }
+        
+        if (chuFilter.filterConstant) {
+            // TODO: Add ablilty to change level index
+            songs = songs?.filterConstant(levelIndex: 3, lower: Double(chuFilter.filterConstantLowerBound) ?? 0.0, upper: Double(chuFilter.filterConstantUpperBound) ?? 15.4)
+        }
+        
+        if (chuFilter.filterLevel) {
+            songs = songs?.filterLevel(lower: chuFilter.filterLevelLowerBound , upper: chuFilter.filterLevelUpperBound)
+        }
+        
+        if (chuFilter.filterGenre) {
+            songs = songs?.filterGenre(keywords: chuFilter.filterGenreSelection)
+        }
+        
+        if (chuFilter.filterVersion) {
+            songs = songs?.filterVersion(keywords: chuFilter.filterVersionSelection)
+        }
+        
+        return songs
+    }
 }
 
 struct FilterPanelView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanelView(isOpen: .constant(true), shouldFilter: .constant(false), filter: FilterManager.chunithm)
+        FilterPanelView(isOpen: .constant(true), filteredMaimaiResult: [], filteredChunithmResult: [], filter: FilterManager.chunithm)
     }
 }
 
