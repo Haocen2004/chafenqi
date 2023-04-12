@@ -17,6 +17,7 @@ struct UpdaterMainView: View {
     @State var isShowingHelp = false
     
     @State var isProxyOn = false
+    @State var isExperimentalPort = false
     @State var proxyStatus = ""
     
     @State private var observers = [AnyObject]()
@@ -47,6 +48,9 @@ struct UpdaterMainView: View {
             }
             
             Section {
+                Toggle(isOn: $isExperimentalPort) {
+                    Text("实验性服务器")
+                }
                 Button {
                     isShowingAlert.toggle()
                 } label: {
@@ -129,7 +133,7 @@ struct UpdaterMainView: View {
             service.manager?.isEnabled = true
             service.manager?.saveToPreferences { _ in
                 do {
-                    try service.manager?.connection.startVPNTunnel()
+                    try service.manager?.connection.startVPNTunnel(options: ["port": (isExperimentalPort ? 8999 : 8998) as NSObject])
                 } catch {
                     print("Failed to start proxy.")
                     print(error)
