@@ -12,6 +12,7 @@ class CFQUser: ObservableObject {
     @Published var didLogin = false
     
     @Published var token = ""
+    @Published var jwtToken = ""
     
     @AppStorage("settingsCurrentMode") var currentMode = 0
     @AppStorage("settingsRecentLogEntryCount") var entryCount = "30"

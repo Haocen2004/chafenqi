@@ -84,6 +84,9 @@
 		BFEB5AEB29897E1C005646AA /* ChunithmUserScoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */; };
 		BFECEC6C297D286A00D2F383 /* ChartImageGrabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */; };
 		BFECEC73297D37E600D2F383 /* SongChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFECEC72297D37E600D2F383 /* SongChartView.swift */; };
+		BFEE528829E8697300F625C6 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEE528729E8697300F625C6 /* Updater.swift */; };
+		BFEE528B29E86C2400F625C6 /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = BFEE528A29E86C2400F625C6 /* Crypto */; };
+		BFEE528D29E87EF200F625C6 /* CFQData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEE528C29E87EF200F625C6 /* CFQData.swift */; };
 		BFEF7EDE298A856E00F87ACC /* ToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEF7EDD298A856E00F87ACC /* ToolView.swift */; };
 		BFF353C129681F8D001392E5 /* chafenqiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF353C029681F8D001392E5 /* chafenqiApp.swift */; };
 		BFF353C329681F8D001392E5 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF353C229681F8D001392E5 /* MainView.swift */; };
@@ -216,6 +219,8 @@
 		BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunithmUserScoreData.swift; sourceTree = "<group>"; };
 		BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartImageGrabber.swift; sourceTree = "<group>"; };
 		BFECEC72297D37E600D2F383 /* SongChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongChartView.swift; sourceTree = "<group>"; };
+		BFEE528729E8697300F625C6 /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		BFEE528C29E87EF200F625C6 /* CFQData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQData.swift; sourceTree = "<group>"; };
 		BFEF7EDD298A856E00F87ACC /* ToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolView.swift; sourceTree = "<group>"; };
 		BFF353BD29681F8D001392E5 /* chafenqi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chafenqi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF353C029681F8D001392E5 /* chafenqiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chafenqiApp.swift; sourceTree = "<group>"; };
@@ -245,6 +250,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFEE528B29E86C2400F625C6 /* Crypto in Frameworks */,
 				BFAF5E8E296F25F100A0B771 /* CachedAsyncImage in Frameworks */,
 				BF42045829982705008C7E02 /* AlertToast in Frameworks */,
 			);
@@ -420,6 +426,7 @@
 				BFBC54FA298CEB0500A93918 /* Chunithm */,
 				BF3739C229C4E5F7002825B4 /* CFQUser.swift */,
 				BF3739C429C4F47B002825B4 /* CFQPersistentData.swift */,
+				BFEE528C29E87EF200F625C6 /* CFQData.swift */,
 			);
 			path = Struct;
 			sourceTree = "<group>";
@@ -435,6 +442,7 @@
 				BF7BC69A297C3365003A67B0 /* DataTool.swift */,
 				BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */,
 				BFC256AC29A7E96100B65CE7 /* ModalView.swift */,
+				BFEE528729E8697300F625C6 /* Updater.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -671,6 +679,7 @@
 			packageProductDependencies = (
 				BFAF5E8D296F25F100A0B771 /* CachedAsyncImage */,
 				BF42045729982705008C7E02 /* AlertToast */,
+				BFEE528A29E86C2400F625C6 /* Crypto */,
 			);
 			productName = chafenqi;
 			productReference = BFF353BD29681F8D001392E5 /* chafenqi.app */;
@@ -750,6 +759,7 @@
 			packageReferences = (
 				BFAF5E8C296F25F100A0B771 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				BF42045629982705008C7E02 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				BFEE528929E86C2400F625C6 /* XCRemoteSwiftPackageReference "swift-crypto" */,
 			);
 			productRefGroup = BFF353BE29681F8D001392E5 /* Products */;
 			projectDirPath = "";
@@ -840,6 +850,7 @@
 				BF9E9C4A29BA3A6C0011C2B1 /* NamePlateView.swift in Sources */,
 				BF572E1529A5E39D00E9811B /* ChunithmRecentRecord.swift in Sources */,
 				BFBC54FD298CEB2D00A93918 /* MaimaiPlayerProfile.swift in Sources */,
+				BFEE528D29E87EF200F625C6 /* CFQData.swift in Sources */,
 				BFCD826129CA20710032264F /* LoginView.swift in Sources */,
 				BF74D20D29C387AE0099B427 /* CommentComposer.swift in Sources */,
 				BFBC5503298CEB5700A93918 /* MaimaiChartStat.swift in Sources */,
@@ -847,6 +858,7 @@
 				BF4886A8298DA4BB00D7F7D2 /* MaimaiMiniView.swift in Sources */,
 				BF3739C529C4F47B002825B4 /* CFQPersistentData.swift in Sources */,
 				BFBC5501298CEB4C00A93918 /* MaimaiSongData.swift in Sources */,
+				BFEE528829E8697300F625C6 /* Updater.swift in Sources */,
 				BFF353C329681F8D001392E5 /* MainView.swift in Sources */,
 				BFC256A729A7E32000B65CE7 /* AsyncImage.swift in Sources */,
 				BF0D912C296C341F005DC8A3 /* SettingsView.swift in Sources */,
@@ -1321,6 +1333,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		BFEE528929E86C2400F625C6 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1333,6 +1353,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BFAF5E8C296F25F100A0B771 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
 			productName = CachedAsyncImage;
+		};
+		BFEE528A29E86C2400F625C6 /* Crypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BFEE528929E86C2400F625C6 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = Crypto;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
