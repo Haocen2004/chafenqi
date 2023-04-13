@@ -69,52 +69,54 @@ struct CFQServer {
     }
     
     struct Maimai {
-        static func fetchUserInfo(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "maimai", category: "info", token: token)
+        static func fetchUserInfo(token: String) async throws -> CFQData.Maimai.UserInfo {
+            return try await fetchDataByCategory(CFQData.Maimai.UserInfo.self, game: "maimai", category: "info", token: token)
         }
         
-        static func fetchUserBest(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "maimai", category: "best", token: token)
+        static func fetchUserBest(token: String) async throws -> [CFQData.Maimai.BestScoreEntry] {
+            try await fetchDataByCategory(Array<CFQData.Maimai.BestScoreEntry>.self, game: "maimai", category: "best", token: token)
         }
         
-        static func fetchUserRecent(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "maimai", category: "recent", token: token)
+        static func fetchUserRecent(token: String) async throws -> [CFQData.Maimai.RecentScoreEntry] {
+            try await fetchDataByCategory(Array<CFQData.Maimai.RecentScoreEntry>.self, game: "maimai", category: "recent", token: token)
         }
         
-        static func fetchUserDelta(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "maimai", category: "delta", token: token)
+        static func fetchUserDelta(token: String) async throws -> [CFQData.Maimai.DeltaEntry] {
+            try await fetchDataByCategory(Array<CFQData.Maimai.DeltaEntry>.self, game: "maimai", category: "delta", token: token)
         }
     }
     
     struct Chunithm {
-        static func fetchUserInfo(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "chunithm", category: "info", token: token)
+        static func fetchUserInfo(token: String) async throws -> CFQData.Chunithm.UserInfo {
+            try await fetchDataByCategory(CFQData.Chunithm.UserInfo.self, game: "chunithm", category: "info", token: token)
         }
         
-        static func fetchUserBest(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "chunithm", category: "best", token: token)
+        static func fetchUserBest(token: String) async throws -> [CFQData.Chunithm.BestScoreEntry] {
+            try await fetchDataByCategory(Array<CFQData.Chunithm.BestScoreEntry>.self, game: "chunithm", category: "best", token: token)
         }
         
-        static func fetchUserRecent(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "chunithm", category: "recent", token: token)
+        static func fetchUserRecent(token: String) async throws -> [CFQData.Chunithm.RecentScoreEntry] {
+            try await fetchDataByCategory(Array<CFQData.Chunithm.RecentScoreEntry>.self, game: "chunithm", category: "recent", token: token)
         }
         
-        static func fetchUserDelta(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "chunithm", category: "delta", token: token)
+        static func fetchUserDelta(token: String) async throws -> [CFQData.Chunithm.DeltaEntry] {
+            try await fetchDataByCategory(Array<CFQData.Chunithm.DeltaEntry>.self, game: "chunithm", category: "delta", token: token)
         }
         
-        static func fetchUserExtras(token: String) async throws {
-            let data = try await fetchDataByCategory(game: "chunithm", category: "extras", token: token)
+        static func fetchUserExtras(token: String) async throws -> CFQData.Chunithm.Extras {
+            try await fetchDataByCategory(CFQData.Chunithm.Extras.self, game: "chunithm", category: "extras", token: token)
         }
     }
     
-    static private func fetchDataByCategory(game: String, category: String, token: String) async throws -> Data {
+    static private func fetchDataByCategory<T>(_ t: T.Type, game: String, category: String, token: String) async throws -> T where T : Decodable {
         do {
             let (data, response) = try await communicateWithPayload(path: "api/\(game)/\(category)", method: "GET", token: token)
             if (response.statusCode() != 200) {
                 try throwErrorByMessageData(errMessageData: data)
             }
-            return data
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch is DecodingError {
+            throw CFQServerError.ParsingError
         } catch {
             throw CFQServerError.RequestError
         }

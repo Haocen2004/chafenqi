@@ -144,14 +144,14 @@ struct CFQData {
             var updatedAt: String
         }
         
-        struct ExtrasEntry: Codable {
+        struct Extras: Codable {
             var nameplates: [Nameplate]
             var skills: [Skill]
-            var characters: [ExtrasEntry.Character]
+            var characters: [Extras.Character]
             var trophies: [Trophy]
             var mapIcons: [MapIcon]
             var tickets: [Ticket]
-            var collections: [ExtrasEntry.Collection]
+            var collections: [Extras.Collection]
             
             struct Nameplate: Codable {
                 var name: String
