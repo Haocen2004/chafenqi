@@ -221,3 +221,14 @@ struct CFQData {
         }
     }
 }
+
+typealias MaimaiUserInfo = CFQData.Maimai.UserInfo
+typealias MaimaiBestScoreEntries = [CFQData.Maimai.BestScoreEntry]
+typealias MaimaiRecentScoreEntries = [CFQData.Maimai.RecentScoreEntry]
+typealias MaimaiDeltaEntries = [CFQData.Maimai.DeltaEntry]
+
+typealias ChunithmUserInfo = CFQData.Chunithm.UserInfo
+typealias ChunithmBestScoreEntries = [CFQData.Chunithm.BestScoreEntry]
+typealias ChunithmRecentScoreEntries = [CFQData.Chunithm.RecentScoreEntry]
+typealias ChunithmDeltaEntries = [CFQData.Chunithm.DeltaEntry]
+typealias ChunithmExtras = CFQData.Chunithm.Extras
