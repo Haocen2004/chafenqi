@@ -84,7 +84,7 @@
 		BFEB5AEB29897E1C005646AA /* ChunithmUserScoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */; };
 		BFECEC6C297D286A00D2F383 /* ChartImageGrabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */; };
 		BFECEC73297D37E600D2F383 /* SongChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFECEC72297D37E600D2F383 /* SongChartView.swift */; };
-		BFEE528829E8697300F625C6 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEE528729E8697300F625C6 /* Updater.swift */; };
+		BFEE528829E8697300F625C6 /* CFQServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEE528729E8697300F625C6 /* CFQServer.swift */; };
 		BFEE528B29E86C2400F625C6 /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = BFEE528A29E86C2400F625C6 /* Crypto */; };
 		BFEE528D29E87EF200F625C6 /* CFQData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEE528C29E87EF200F625C6 /* CFQData.swift */; };
 		BFEF7EDE298A856E00F87ACC /* ToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEF7EDD298A856E00F87ACC /* ToolView.swift */; };
@@ -219,7 +219,7 @@
 		BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunithmUserScoreData.swift; sourceTree = "<group>"; };
 		BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartImageGrabber.swift; sourceTree = "<group>"; };
 		BFECEC72297D37E600D2F383 /* SongChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongChartView.swift; sourceTree = "<group>"; };
-		BFEE528729E8697300F625C6 /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		BFEE528729E8697300F625C6 /* CFQServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQServer.swift; sourceTree = "<group>"; };
 		BFEE528C29E87EF200F625C6 /* CFQData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQData.swift; sourceTree = "<group>"; };
 		BFEF7EDD298A856E00F87ACC /* ToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolView.swift; sourceTree = "<group>"; };
 		BFF353BD29681F8D001392E5 /* chafenqi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chafenqi.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -442,7 +442,7 @@
 				BF7BC69A297C3365003A67B0 /* DataTool.swift */,
 				BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */,
 				BFC256AC29A7E96100B65CE7 /* ModalView.swift */,
-				BFEE528729E8697300F625C6 /* Updater.swift */,
+				BFEE528729E8697300F625C6 /* CFQServer.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -858,7 +858,7 @@
 				BF4886A8298DA4BB00D7F7D2 /* MaimaiMiniView.swift in Sources */,
 				BF3739C529C4F47B002825B4 /* CFQPersistentData.swift in Sources */,
 				BFBC5501298CEB4C00A93918 /* MaimaiSongData.swift in Sources */,
-				BFEE528829E8697300F625C6 /* Updater.swift in Sources */,
+				BFEE528829E8697300F625C6 /* CFQServer.swift in Sources */,
 				BFF353C329681F8D001392E5 /* MainView.swift in Sources */,
 				BFC256A729A7E32000B65CE7 /* AsyncImage.swift in Sources */,
 				BF0D912C296C341F005DC8A3 /* SettingsView.swift in Sources */,

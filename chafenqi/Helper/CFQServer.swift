@@ -1,5 +1,5 @@
 //
-//  Updater.swift
+//  CFQServer.swift
 //  chafenqi
 //
 //  Created by 刘易斯 on 2023/4/14.
@@ -179,3 +179,8 @@ enum CFQServerError: Error {
     case UserNotPremiumError
     case ServerError(errMessage: String)
 }
+
+typealias AuthServer = CFQServer.Auth
+typealias TokenServer = CFQServer.Fish
+typealias MaimaiServer = CFQServer.Maimai
+typealias ChunithmServer = CFQServer.Chunithm
