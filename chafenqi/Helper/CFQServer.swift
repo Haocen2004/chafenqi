@@ -7,12 +7,12 @@
 
 import Foundation
 import Crypto
+import AlertToast
 
 struct CFQServer {
     struct Auth {
         static func auth(username: String, plainPassword: String) async throws -> String {
             let body = ["username": username, "password": plainPassword.sha256String()]
-            
             do {
                 let (data, response) = try await communicateWithPayload(path: "api/auth", method: "POST", payload: JSONSerialization.data(withJSONObject: body))
                 let resString = String(data: data, encoding: .utf8)
@@ -21,7 +21,7 @@ struct CFQServer {
                 }
                 guard let token = resString else { throw CFQServerError.ParsingError }
                 return token
-            } catch {
+            } catch CFQServerError.RequestError {
                 throw CFQServerError.RequestError
             }
         }
@@ -37,10 +37,9 @@ struct CFQServer {
             do {
                 let (_, response) = try await communicateWithPayload(path: "api/register", method: "POST", payload: JSONSerialization.data(withJSONObject: body))
                 return response.statusCode() == 200
-            } catch {
-                
+            } catch CFQServerError.RequestError {
+                throw CFQServerError.RequestError
             }
-            return false
         }
         
         static private func checkUsernameAvailability(username: String) async throws -> Bool {
@@ -152,10 +151,11 @@ struct CFQServer {
             request.setValue("Authorization", forHTTPHeaderField: "Bearer \(token)")
         }
         if (!payload.isEmpty) {
+            request.setValue("\(payload.count)", forHTTPHeaderField: "Content-Length")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = payload
         }
         request.httpMethod = method
-        
         return try await session.data(for: request)
     }
 }
@@ -178,6 +178,35 @@ enum CFQServerError: Error {
     case EmptyRecordError
     case UserNotPremiumError
     case ServerError(errMessage: String)
+}
+
+extension CFQServerError: CustomStringConvertible {
+    public var description: String {
+        switch (self) {
+        case .ParsingError:
+            return "数据解析失败"
+        case .RequestError:
+            return "无法连接至服务器"
+        case .CredentialsNotMatchError:
+            return "用户名或密码错误"
+        case .UserNotFoundError:
+            return "用户不存在"
+        case .TokenInvalidError:
+            return "Token无效"
+        case .EmptyRecordError:
+            return "无用户数据"
+        case .UserNotPremiumError:
+            return "非赞助用户"
+        case .ServerError(let errMessage):
+            return "服务器发生错误: \(errMessage)"
+        }
+    }
+}
+
+extension CFQServerError {
+    func alertToast() -> AlertToast {
+        return AlertToast(displayMode: .hud, type: .error(.red), title: "发生错误", subTitle: self.description)
+    }
 }
 
 typealias AuthServer = CFQServer.Auth

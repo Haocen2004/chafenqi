@@ -14,5 +14,11 @@ final class AlertToastManager: ObservableObject {
     @Published var showingCommentPostSucceed = false
     @Published var showingCommentPostFailed = false
     
+    // CFQServer Related
+    @Published var showingUsernameNotUniqueToast = false
+    @Published var showingCredentialsNotMatchToast = false
+    @Published var showingRequestErrorToast = false
+    @Published var showingParsingErrorToast = false
+    
     static let shared = AlertToastManager()
 }

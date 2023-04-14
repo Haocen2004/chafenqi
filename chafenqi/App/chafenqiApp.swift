@@ -23,12 +23,14 @@ struct chafenqiApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainView(currentTab: $currentTab)
-                .onOpenURL { url in
-                    guard let identifier = url.tabIdentifier else { return }
-                    
-                    currentTab = identifier
-                }
+//            MainView(currentTab: $currentTab)
+//                .onOpenURL { url in
+//                    guard let identifier = url.tabIdentifier else { return }
+//
+//                    currentTab = identifier
+//                }
+            LoginView()
+            
         }
     }
 }
