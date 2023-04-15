@@ -16,7 +16,9 @@ enum LoginState {
 }
 
 struct LoginView: View {
+    @AppStorage("JWT") var jwtToken = ""
     @ObservedObject var alertToast = AlertToastModel.shared
+    @StateObject var user: CFQNUser = CFQNUser()
     
     @State var task: Task<Void, Never>? = nil
     
@@ -26,8 +28,8 @@ struct LoginView: View {
     @State private var loginPrompt = "登录中"
     @State private var registerPrompt = "注册中"
     
-    @State var account: String = ""
-    @State var password: String = ""
+    @State var account: String = "louiswu2011"
+    @State var password: String = "bed200110"
     
     var body: some View {
         VStack {
@@ -82,14 +84,24 @@ struct LoginView: View {
                         self.task = Task {
                             do {
                                 let token = await login(username: account, password: password)
-                                print(token)
                                 if (!token.isEmpty) {
                                     // TODO: Navigate to HomeView
-                                    
+                                    jwtToken = token
+                                    try await user.load(forceReload: false)
+                                    print("Complete.")
                                 } else {
                                     alertToast.show = true
                                     state = .loginPending
                                 }
+                            } catch {
+                                switch error {
+                                case CFQNUserError.LoadingError(cause: let cause, _):
+                                    alertToast.toast = AlertToast(displayMode: .hud, type: .error(.red), title: "网络连接错误", subTitle: cause)
+                                default:
+                                    alertToast.toast = AlertToast(displayMode: .hud, type: .error(.red), title: "加载错误", subTitle: String(describing: error))
+                                }
+                                alertToast.show = true
+                                state = .loginPending
                             }
                         }
                     }

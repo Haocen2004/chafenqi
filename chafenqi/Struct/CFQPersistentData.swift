@@ -32,7 +32,7 @@ class CFQPersistentData: ObservableObject {
         @AppStorage("loadedMaimaiRanking") var loadedRanking: Data = Data()
         
         var songlist: Array<MaimaiSongData> = []
-        var chartStats: Dictionary<String, Array<MaimaiChartStat>> = [:]
+        var chartStats = MaimaiChartStatWrapper(charts: [:])
         var ranking: Array<MaimaiPlayerRating> = []
         
         static func hasCache() -> Bool {
@@ -66,7 +66,7 @@ class CFQPersistentData: ObservableObject {
     
     private func loadMaimai() async throws {
         self.maimai.songlist = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
-        self.maimai.chartStats = try JSONDecoder().decode(Dictionary<String, Array<MaimaiChartStat>>.self, from: self.maimai.loadedStats)
+        self.maimai.chartStats = try JSONDecoder().decode(MaimaiChartStatWrapper.self, from: self.maimai.loadedStats)
         self.maimai.ranking = try JSONDecoder().decode(Array<MaimaiPlayerRating>.self, from: self.maimai.loadedRanking)
     }
     
@@ -76,7 +76,7 @@ class CFQPersistentData: ObservableObject {
         self.maimai.loadedRanking = try await MaimaiDataGrabber.getRatingRanking()
         
         self.maimai.songlist = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
-        self.maimai.chartStats = try JSONDecoder().decode(Dictionary<String, Array<MaimaiChartStat>>.self, from: self.maimai.loadedStats)
+        self.maimai.chartStats = try JSONDecoder().decode(MaimaiChartStatWrapper.self, from: self.maimai.loadedStats)
         self.maimai.ranking = try JSONDecoder().decode(Array<MaimaiPlayerRating>.self, from: self.maimai.loadedRanking)
     }
     
@@ -112,5 +112,12 @@ class CFQPersistentData: ObservableObject {
             print("Persistent data downloaded.")
             return data
         }
+    }
+    
+    static func forceRefresh() async throws -> CFQPersistentData {
+        let data = CFQPersistentData()
+        try await data.update()
+        print("Persistent data downloaded.")
+        return data
     }
 }

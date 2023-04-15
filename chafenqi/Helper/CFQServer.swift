@@ -69,60 +69,78 @@ struct CFQServer {
     
     struct Maimai {
         static func fetchUserInfo(token: String) async throws -> MaimaiUserInfo {
-            return try await fetchDataByCategory(MaimaiUserInfo.self, game: "maimai", category: "info", token: token)
+            return try await fetchDataByCategory(MaimaiUserInfo.self, game: "maimai", category: "info", token: token) ?? .empty
         }
         
         static func fetchUserBest(token: String) async throws -> MaimaiBestScoreEntries {
-            try await fetchDataByCategory(MaimaiBestScoreEntries.self, game: "maimai", category: "best", token: token)
+            try await fetchDataByCategory(MaimaiBestScoreEntries.self, game: "maimai", category: "best", token: token) ?? []
         }
         
         static func fetchUserRecent(token: String) async throws -> MaimaiRecentScoreEntries {
-            try await fetchDataByCategory(MaimaiRecentScoreEntries.self, game: "maimai", category: "recent", token: token)
+            try await fetchDataByCategory(MaimaiRecentScoreEntries.self, game: "maimai", category: "recent", token: token) ?? []
         }
         
         static func fetchUserDelta(token: String) async throws -> MaimaiDeltaEntries {
-            try await fetchDataByCategory(MaimaiDeltaEntries.self, game: "maimai", category: "delta", token: token)
+            do {
+                return try await fetchDataByCategory(MaimaiDeltaEntries.self, game: "maimai", category: "delta", token: token) ?? []
+            } catch CFQServerError.UserNotPremiumError {
+                return []
+            }
         }
     }
     
     struct Chunithm {
         static func fetchUserInfo(token: String) async throws -> ChunithmUserInfo {
-            try await fetchDataByCategory(ChunithmUserInfo.self, game: "chunithm", category: "info", token: token)
+            try await fetchDataByCategory(ChunithmUserInfo.self, game: "chunithm", category: "info", token: token) ?? .empty
         }
         
         static func fetchUserBest(token: String) async throws -> ChunithmBestScoreEntries {
-            try await fetchDataByCategory(ChunithmBestScoreEntries.self, game: "chunithm", category: "best", token: token)
+            try await fetchDataByCategory(ChunithmBestScoreEntries.self, game: "chunithm", category: "best", token: token) ?? []
         }
         
         static func fetchUserRecent(token: String) async throws -> ChunithmRecentScoreEntries {
-            try await fetchDataByCategory(ChunithmRecentScoreEntries.self, game: "chunithm", category: "recent", token: token)
+            try await fetchDataByCategory(ChunithmRecentScoreEntries.self, game: "chunithm", category: "recent", token: token) ?? []
         }
         
         static func fetchUserDelta(token: String) async throws -> ChunithmDeltaEntries {
-            try await fetchDataByCategory(ChunithmDeltaEntries.self, game: "chunithm", category: "delta", token: token)
+            do {
+                return try await fetchDataByCategory(ChunithmDeltaEntries.self, game: "chunithm", category: "delta", token: token) ?? []
+            } catch CFQServerError.UserNotPremiumError {
+                return []
+            }
         }
         
         static func fetchUserExtras(token: String) async throws -> ChunithmExtras {
-            try await fetchDataByCategory(ChunithmExtras.self, game: "chunithm", category: "extras", token: token)
+            do {
+                return try await fetchDataByCategory(ChunithmExtras.self, game: "chunithm", category: "extras", token: token) ?? .empty
+            } catch CFQServerError.UserNotPremiumError {
+                return ChunithmExtras.empty
+            }
         }
     }
     
-    static private func fetchDataByCategory<T>(_ t: T.Type, game: String, category: String, token: String) async throws -> T where T : Decodable {
+    static private func fetchDataByCategory<T>(_ t: T.Type, game: String, category: String, token: String) async throws -> T? where T : Decodable {
         do {
             let (data, response) = try await communicateWithPayload(path: "api/\(game)/\(category)", method: "GET", token: token)
             if (response.statusCode() != 200) {
+                print(response.statusCode())
                 try throwErrorByMessageData(errMessageData: data)
             }
             return try JSONDecoder().decode(T.self, from: data)
+        } catch DecodingError.dataCorrupted(_) {
+            return nil
         } catch is DecodingError {
             throw CFQServerError.ParsingError
+        } catch CFQServerError.EmptyRecordError {
+            return nil
         } catch {
-            throw CFQServerError.RequestError
+            throw error
         }
     }
     
     static private func throwErrorByMessageData(errMessageData: Data) throws {
         guard let errMessage = String(data: errMessageData, encoding: .utf8) else { throw CFQServerError.ParsingError }
+        print(errMessage)
         switch errMessage {
         case "INVALID":
             throw CFQServerError.TokenInvalidError
@@ -147,15 +165,16 @@ struct CFQServer {
         }
         var request = URLRequest(url: comp.url!)
         
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         if (!token.isEmpty) {
-            request.setValue("Authorization", forHTTPHeaderField: "Bearer \(token)")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         if (!payload.isEmpty) {
             request.setValue("\(payload.count)", forHTTPHeaderField: "Content-Length")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = payload
         }
         request.httpMethod = method
+        print(method, request.url!)
         return try await session.data(for: request)
     }
 }

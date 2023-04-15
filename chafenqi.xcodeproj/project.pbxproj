@@ -80,6 +80,7 @@
 		BFCA383229770851008E30F1 /* CFQError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA383129770851008E30F1 /* CFQError.swift */; };
 		BFCD826129CA20710032264F /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCD826029CA20710032264F /* LoginView.swift */; };
 		BFE6DE6629CADA2E00AEF950 /* RatingAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE6DE6529CADA2E00AEF950 /* RatingAnalysisView.swift */; };
+		BFE829D529EAAD0A00DAA971 /* CFQNUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE829D429EAAD0A00DAA971 /* CFQNUser.swift */; };
 		BFEB5AE9298937E8005646AA /* ChunithmUserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEB5AE8298937E8005646AA /* ChunithmUserData.swift */; };
 		BFEB5AEB29897E1C005646AA /* ChunithmUserScoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */; };
 		BFECEC6C297D286A00D2F383 /* ChartImageGrabber.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */; };
@@ -216,6 +217,7 @@
 		BFCA383129770851008E30F1 /* CFQError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQError.swift; sourceTree = "<group>"; };
 		BFCD826029CA20710032264F /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		BFE6DE6529CADA2E00AEF950 /* RatingAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingAnalysisView.swift; sourceTree = "<group>"; };
+		BFE829D429EAAD0A00DAA971 /* CFQNUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQNUser.swift; sourceTree = "<group>"; };
 		BFEB5AE8298937E8005646AA /* ChunithmUserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunithmUserData.swift; sourceTree = "<group>"; };
 		BFEB5AEA29897E1C005646AA /* ChunithmUserScoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunithmUserScoreData.swift; sourceTree = "<group>"; };
 		BFECEC6B297D286A00D2F383 /* ChartImageGrabber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartImageGrabber.swift; sourceTree = "<group>"; };
@@ -430,6 +432,7 @@
 				BF3739C229C4E5F7002825B4 /* CFQUser.swift */,
 				BF3739C429C4F47B002825B4 /* CFQPersistentData.swift */,
 				BFEE528C29E87EF200F625C6 /* CFQData.swift */,
+				BFE829D429EAAD0A00DAA971 /* CFQNUser.swift */,
 			);
 			path = Struct;
 			sourceTree = "<group>";
@@ -887,6 +890,7 @@
 				BF0CFD5E297B25E1003763E2 /* ChartIdConverter.swift in Sources */,
 				BFC256AD29A7E96100B65CE7 /* ModalView.swift in Sources */,
 				BF7BC69D297C482C003A67B0 /* SongViewModifier.swift in Sources */,
+				BFE829D529EAAD0A00DAA971 /* CFQNUser.swift in Sources */,
 				BF9CEFB82992C00700658724 /* UpdaterRouterView.swift in Sources */,
 				BF572E1729A5E3A700E9811B /* MaimaiRecentRecord.swift in Sources */,
 				BF403F2F29B642F4005D1C67 /* RegexManager.swift in Sources */,

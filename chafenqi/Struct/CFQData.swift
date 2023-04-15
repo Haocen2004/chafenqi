@@ -22,6 +22,8 @@ struct CFQData {
             var stats: String
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = UserInfo(uid: 0, nickname: "", trophy: "", rating: 0, maxRating: 0, star: 0, charUrl: "", gradeUrl: "", playCount: 0, stats: "", createdAt: "", updatedAt: "")
         }
         
         struct BestScoreEntry: Codable {
@@ -96,6 +98,8 @@ struct CFQData {
             var playCount: Int
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = UserInfo(uid: 0, nickname: "", trophy: "", plate: "", dan: 0, ribbon: 0, rating: 0, maxRating: 0, overpower_raw: 0, overpower_percent: 0, lastPlayDate: 0, charUrl: "", friendCode: "", currentGold: 0, totalGold: 0, playCount: 0, createdAt: "", updatedAt: "")
         }
         
         struct BestScoreEntry: Codable {
@@ -145,6 +149,8 @@ struct CFQData {
         }
         
         struct Extras: Codable {
+            static let empty = Extras(nameplates: [], skills: [], characters: [], trophies: [], mapIcons: [], tickets: [], collections: [])
+            
             var nameplates: [Nameplate]
             var skills: [Skill]
             var characters: [Extras.Character]

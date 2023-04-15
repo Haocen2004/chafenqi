@@ -27,7 +27,7 @@ struct MaimaiDetailView: View {
     
     @State private var userInfo = MaimaiPlayerRecord.shared
     @State private var scoreEntries = [Int: MaimaiRecordEntry]()
-    @State private var chartStats = [:]
+    @State private var chartStats: Array<MaimaiChartStat> = []
     
     var song: MaimaiSongData
     
@@ -125,7 +125,7 @@ struct MaimaiDetailView: View {
                 .padding(.horizontal)
                 
                 if (!loadingScore && user.didLogin) {
-                    let stats = chartStats[song.musicId] as! Array<MaimaiChartStat>
+                    let stats = chartStats
                     
                     HStack {
                         Text("游玩记录")
@@ -205,7 +205,7 @@ struct MaimaiDetailView: View {
                             $0.levelIndex < $1.levelIndex
                         }
                         scoreEntries = Dictionary(uniqueKeysWithValues: scores.map { ($0.levelIndex, $0) })
-                        chartStats = user.data.maimai.chartStats
+                        chartStats = user.data.maimai.chartStats.charts[song.musicId] ?? []
                     }
                     
                     loadingComments = true
@@ -337,15 +337,9 @@ struct MaimaiDetailView: View {
                                 
                                 VStack {
                                     HStack {
-                                        Text("评级:")
+                                        Text("拟合难度:")
                                         Spacer()
-                                        Text(statsExists ? String(chartStat!.tag!) : "-")
-                                    }
-                                    
-                                    HStack {
-                                        Text("SSS人数:")
-                                        Spacer()
-                                        Text(statsExists ? String(chartStat!.ssspCount!) : "-")
+                                        Text(statsExists ? "\(chartStat!.fit_diff!, specifier: "%.2f")" : "-")
                                     }
                                     
                                     HStack {
