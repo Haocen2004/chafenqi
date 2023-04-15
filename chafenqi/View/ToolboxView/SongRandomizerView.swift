@@ -11,7 +11,7 @@ import CachedAsyncImage
 struct SongRandomizerView: View {
     @AppStorage("settingsRandomizerFilterMode") var filterMode = 0
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State private var isSpinning = false
     @State private var showingConstant = false
@@ -130,43 +130,43 @@ struct SongRandomizerView: View {
     func initRandomView() {
         if (user.currentMode == 0) {
             filterChunithmSongList()
-            decodedChunithmSongs = user.data.chunithm.songs
+            decodedChunithmSongs = user.persistent.chunithm.songs
             randomChunithmSong = getChunithmRandomSong()
         } else {
             filterMaimaiSongList()
-            decodedMaimaiSongs = user.data.maimai.songlist
+            decodedMaimaiSongs = user.persistent.maimai.songs
             randomMaimaiSong = getMaimaiRandomSong()
         }
         firstTimeAppear = false
     }
     
     func filterChunithmSongList() {
-        guard user.didLogin else { return }
+        guard user.didLogin && !user.chunithm.isEmpty else { return }
         
         switch (filterMode) {
         case 0:
             return
         case 1:
-            let playedList = user.chunithm!.profile.records.best.compactMap { $0.musicId }
-            decodedChunithmSongs = decodedChunithmSongs.filter { !playedList.contains($0.musicId) }
+            let playedList = user.chunithm.bestScore.compactMap { $0.idx }
+            decodedChunithmSongs = decodedChunithmSongs.filter { !playedList.contains(String($0.musicId)) }
         default:
-            let playedList = user.chunithm!.profile.records.best.compactMap { $0.musicId }
-            decodedChunithmSongs = decodedChunithmSongs.filter { playedList.contains($0.musicId) }
+            let playedList = user.chunithm.bestScore.compactMap { $0.idx }
+            decodedChunithmSongs = decodedChunithmSongs.filter { playedList.contains(String($0.musicId)) }
         }
     }
     
     func filterMaimaiSongList() {
-        guard user.didLogin else { return }
+        guard user.didLogin && !user.maimai.isEmpty else { return }
         
         switch (filterMode) {
         case 0:
             return
         case 1:
-            let playedList = user.maimai!.record.records.compactMap{ $0.musicId }
-            decodedMaimaiSongs = decodedMaimaiSongs.filter { !playedList.contains( Int($0.musicId)!) }
+            let playedList = user.maimai.bestScore.compactMap{ $0.title }
+            decodedMaimaiSongs = decodedMaimaiSongs.filter { !playedList.contains( $0.title) }
         default:
-            let playedList = user.maimai!.record.records.compactMap{ $0.musicId }
-            decodedMaimaiSongs = decodedMaimaiSongs.filter { !playedList.contains( Int($0.musicId)!) }
+            let playedList = user.maimai.bestScore.compactMap{ $0.title }
+            decodedMaimaiSongs = decodedMaimaiSongs.filter { !playedList.contains( $0.title) }
         }
     }
     

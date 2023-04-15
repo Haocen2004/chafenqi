@@ -36,7 +36,7 @@ struct MainView: View {
     @AppStorage("firstTimeLaunch") var firstTime = true
     
     @ObservedObject var toastManager = AlertToastManager.shared
-    @ObservedObject var user = CFQUser.loadFromCache()
+    @StateObject var user = CFQNUser()
     
     @State private var searchText = ""
     @State private var searchSeletedItem = ""
@@ -44,109 +44,50 @@ struct MainView: View {
     
     @State private var showingWelcome = false
     
-    @State private var status: LoadStatus = .loading(hint: "加载数据中...")
-    
     @Binding var currentTab: TabIdentifier
     
     var body: some View {
-        ZStack {
-            if(user.didLogin) {
-                ZStack {
-                    switch (status) {
-                    case .loading(hint: let hint):
-                        VStack {
-                            ProgressView()
-                            Text(hint)
-                                .padding()
-                        }
-                    case .complete:
-                        TabView(selection: $currentTab) {
-                            NavigationView {
-                                HomeTopView(user: user)
-                            }
-                            .tabItem {
-                                Image(systemName: "house.fill")
-                                Text("主页")
-                            }
-                            .tag(TabIdentifier.home)
-                            
-                            NavigationView {
-                                SongListView(user: user)
-                            }
-                            .tabItem {
-                                Image(systemName: "music.note.list")
-                                Text("歌曲")
-                            }
-                            .tag(TabIdentifier.list)
-                            
-                            NavigationView {
-                                ToolView(user: user)
-                            }
-                            .tabItem {
-                                Image(systemName: "shippingbox.fill")
-                                Text("工具")
-                            }
-                            .tag(TabIdentifier.tool)
-                            .toast(isPresenting: $toastManager.showingUpdaterPasted, duration: 2, tapToDismiss: true) {
-                                AlertToast(displayMode: .hud, type: .complete(.green), title: "已复制到剪贴板")
-                            }
-                        }
-                    case .notLogin:
-                        NavigationView {
-                            NavigationLink {
-                                SettingsView(user: user)
-                            } label: {
-                                Text("点击此处登录查分器")
-                            }
-                        }
-                    case .error(errorText: let errorText):
-                        VStack {
-                            Text("错误")
-                                .padding()
-                            Text(errorText)
-                        }
-                    default:
-                        VStack {
-                            Text("加载出错")
-                                .padding()
-                            Button {
-                                
-                            } label: {
-                                Text("重试")
-                            }
-                        }
+        VStack {
+            if (user.didLogin) {
+                TabView(selection: $currentTab) {
+                    NavigationView {
+                        HomeTopView(user: user)
                     }
-                }
-                .onAppear {
-                    if (firstTime) {
-                        showingWelcome.toggle()
-                        firstTime.toggle()
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("主页")
                     }
+                    .tag(TabIdentifier.home)
                     
-                    Task {
-                        do {
-                            if (user.didLogin) {
-                                try await user.loadFromToken(token: user.token)
-                                if (user.data.shouldReload) {
-                                    user.data = try await CFQPersistentData.loadFromCacheOrRefresh()
-                                }
-                                status = .complete
-                            } else {
-                                status = .notLogin
-                            }
-                        } catch {
-                            status = .error(errorText: error.localizedDescription)
-                        }
+                    NavigationView {
+                        SongListView(user: user)
+                    }
+                    .tabItem {
+                        Image(systemName: "music.note.list")
+                        Text("歌曲")
+                    }
+                    .tag(TabIdentifier.list)
+                    
+                    NavigationView {
+                        ToolView(user: user)
+                    }
+                    .tabItem {
+                        Image(systemName: "shippingbox.fill")
+                        Text("工具")
+                    }
+                    .tag(TabIdentifier.tool)
+                    .toast(isPresenting: $toastManager.showingUpdaterPasted, duration: 2, tapToDismiss: true) {
+                        AlertToast(displayMode: .hud, type: .complete(.green), title: "已复制到剪贴板")
                     }
                 }
             } else {
-                NavigationView {
-                    NavigationLink {
-                        SettingsView(user: user)
-                    } label: {
-                        Text("点击此处登录查分器")
-                    }
-                }
+                LoginView(user: user)
+            }
+        }
+        .onAppear {
+            if (firstTime) {
+                showingWelcome.toggle()
+                firstTime.toggle()
             }
         }
         .sheet(isPresented: $showingWelcome) {

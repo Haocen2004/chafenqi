@@ -19,17 +19,16 @@ And You
 @main
 struct chafenqiApp: App {
     @State var currentTab: TabIdentifier = .home
-    @State var shouldRefresh = false
     
     var body: some Scene {
         WindowGroup {
-//            MainView(currentTab: $currentTab)
-//                .onOpenURL { url in
-//                    guard let identifier = url.tabIdentifier else { return }
-//
-//                    currentTab = identifier
-//                }
-            LoginView()
+            MainView(currentTab: $currentTab)
+                .onOpenURL { url in
+                    guard let identifier = url.tabIdentifier else { return }
+
+                    currentTab = identifier
+                }
+//            LoginView()
             
         }
     }

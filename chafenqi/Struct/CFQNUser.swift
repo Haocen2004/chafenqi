@@ -14,6 +14,11 @@ class CFQNUser: ObservableObject {
     @AppStorage("MaimaiCache") var maimaiCache = Data()
     @AppStorage("ChunithmCache") var chunithmCache = Data()
     
+    @AppStorage("settingsChunithmCoverSource") var chunithmCoverSource = 1
+    @AppStorage("settingsMaimaiCoverSource") var maimaiCoverSource = 0
+    
+    @AppStorage("userCurrentMode") var currentMode = 0
+    
     var username = ""
     @AppStorage("JWT") var jwtToken = ""
     
@@ -21,7 +26,7 @@ class CFQNUser: ObservableObject {
     
     var maimai = Maimai()
     var chunithm = Chunithm()
-    var persisitent = CFQPersistentData()
+    var persistent = CFQPersistentData()
     
     class Maimai: Codable {
         var isEmpty: Bool {
@@ -85,11 +90,11 @@ class CFQNUser: ObservableObject {
         }
     }
     
-    func load(forceReload: Bool, username: String) async throws {
+    func load(username: String, forceReload: Bool = false) async throws {
         if (forceReload) {
-            self.persisitent = try await .forceRefresh()
+            self.persistent = try await .forceRefresh()
         } else {
-            self.persisitent = try await .loadFromCacheOrRefresh()
+            self.persistent = try await .loadFromCacheOrRefresh()
         }
         
         do {

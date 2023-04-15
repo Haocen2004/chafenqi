@@ -10,7 +10,7 @@ import SwiftUI
 struct ToolView: View {
     @AppStorage("settingsCurrentMode") var currentMode = 0
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State private var showingUpdaterView = false
     
@@ -38,27 +38,6 @@ struct ToolView: View {
                         .buttonStyle(.plain)
                     }
                     .frame(height: 40)
-                    
-//                    HStack {
-//                        NavigationLink {
-//
-//                        } label: {
-//                            Image(systemName: "plus.forwardslash.minus")
-//                                .resizable()
-//                                .aspectRatio(1, contentMode: .fit)
-//                                .padding(5)
-//                            VStack(alignment: .leading) {
-//                                Text("分数计算器")
-//                                    .font(.title2)
-//                                    .bold()
-//                                Text("我不要再鸟寸了！")
-//                                    .font(.footnote)
-//                            }
-//                            Spacer()
-//                        }
-//                        .buttonStyle(.plain)
-//                    }
-//                    .frame(height: 50)
                     
                     NavigationLink {
                         UpdaterRouterView(user: user)

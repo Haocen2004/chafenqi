@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UpdaterMainView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     @ObservedObject var service = TunnelManagerService.shared
     @ObservedObject var toastManager = AlertToastManager.shared
     
@@ -17,7 +17,7 @@ struct UpdaterMainView: View {
     @State var isShowingHelp = false
     
     @State var isProxyOn = false
-    @State var isExperimentalPort = false
+    @State var isForwarding = true
     @State var proxyStatus = ""
     
     @State private var observers = [AnyObject]()
@@ -48,8 +48,8 @@ struct UpdaterMainView: View {
             }
             
             Section {
-                Toggle(isOn: $isExperimentalPort) {
-                    Text("实验性服务器")
+                Toggle(isOn: $isForwarding) {
+                    Text("上传至水鱼服务器")
                 }
                 Button {
                     isShowingAlert.toggle()
@@ -133,7 +133,7 @@ struct UpdaterMainView: View {
             service.manager?.isEnabled = true
             service.manager?.saveToPreferences { _ in
                 do {
-                    try service.manager?.connection.startVPNTunnel(options: ["port": (isExperimentalPort ? 8999 : 8998) as NSObject])
+                    try service.manager?.connection.startVPNTunnel(options: ["port": 8999 as NSObject])
                 } catch {
                     print("Failed to start proxy.")
                     print(error)
@@ -161,7 +161,7 @@ struct UpdaterMainView: View {
     func copyUrlToClipboard(mode: Int) {
         let destination = mode == 0 ? "chunithm" : "maimai"
         let pasteboard = UIPasteboard.general
-        let requestUrl = "http://43.139.107.206/upload_\(destination)?token=\(user.token)"
+        let requestUrl = "http://43.139.107.206:8083/upload_\(destination)?jwt=\(user.jwtToken)&forwarding=\(isForwarding ? "1" : "0")"
 
         pasteboard.string = requestUrl
         
@@ -172,6 +172,6 @@ struct UpdaterMainView: View {
 
 struct UpdaterMainView_Previews: PreviewProvider {
     static var previews: some View {
-        UpdaterMainView(user: CFQUser())
+        UpdaterMainView(user: CFQNUser())
     }
 }

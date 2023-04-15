@@ -18,7 +18,7 @@ enum LoginState {
 struct LoginView: View {
     @AppStorage("JWT") var jwtToken = ""
     @ObservedObject var alertToast = AlertToastModel.shared
-    @StateObject var user: CFQNUser = CFQNUser()
+    @ObservedObject var user: CFQNUser
     
     @State var task: Task<Void, Never>? = nil
     
@@ -87,8 +87,11 @@ struct LoginView: View {
                                 if (!token.isEmpty) {
                                     // TODO: Navigate to HomeView
                                     jwtToken = token
-                                    try await user.load(forceReload: false)
-                                    print("Complete.")
+                                    try await user.load(username: account, forceReload: false)
+                                    print("SUCCESS")
+                                    withAnimation(defaultAnimation) {
+                                        user.didLogin = true
+                                    }
                                 } else {
                                     alertToast.show = true
                                     state = .loginPending
@@ -230,7 +233,7 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView(user: CFQNUser())
     }
 }
 

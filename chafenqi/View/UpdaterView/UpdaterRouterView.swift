@@ -9,7 +9,7 @@ import SwiftUI
 import AlertToast
 
 struct UpdaterRouterView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     @ObservedObject var service = TunnelManagerService.shared
     
     var body: some View {
@@ -41,6 +41,6 @@ struct UpdaterRouterView: View {
 
 struct UpdaterRouterView_Previews: PreviewProvider {
     static var previews: some View {
-        UpdaterRouterView(user: CFQUser())
+        UpdaterRouterView(user: CFQNUser())
     }
 }

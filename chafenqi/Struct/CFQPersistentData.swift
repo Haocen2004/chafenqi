@@ -31,7 +31,7 @@ class CFQPersistentData: ObservableObject {
         @AppStorage("loadedMaimaiSongs") var loadedSongs: Data = Data()
         @AppStorage("loadedMaimaiRanking") var loadedRanking: Data = Data()
         
-        var songlist: Array<MaimaiSongData> = []
+        var songs: Array<MaimaiSongData> = []
         var chartStats = MaimaiChartStatWrapper(charts: [:])
         var ranking: Array<MaimaiPlayerRating> = []
         
@@ -65,7 +65,7 @@ class CFQPersistentData: ObservableObject {
     }
     
     private func loadMaimai() async throws {
-        self.maimai.songlist = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
+        self.maimai.songs = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
         self.maimai.chartStats = try JSONDecoder().decode(MaimaiChartStatWrapper.self, from: self.maimai.loadedStats)
         self.maimai.ranking = try JSONDecoder().decode(Array<MaimaiPlayerRating>.self, from: self.maimai.loadedRanking)
     }
@@ -75,7 +75,7 @@ class CFQPersistentData: ObservableObject {
         self.maimai.loadedStats = try await MaimaiDataGrabber.getChartStat()
         self.maimai.loadedRanking = try await MaimaiDataGrabber.getRatingRanking()
         
-        self.maimai.songlist = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
+        self.maimai.songs = try JSONDecoder().decode(Array<MaimaiSongData>.self, from: self.maimai.loadedSongs)
         self.maimai.chartStats = try JSONDecoder().decode(MaimaiChartStatWrapper.self, from: self.maimai.loadedStats)
         self.maimai.ranking = try JSONDecoder().decode(Array<MaimaiPlayerRating>.self, from: self.maimai.loadedRanking)
     }
