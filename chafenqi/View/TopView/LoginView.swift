@@ -84,7 +84,7 @@ struct LoginView: View {
                                 let token = await login(username: account, password: password)
                                 print(token)
                                 if (!token.isEmpty) {
-                                    // Navigate to HomeView
+                                    // TODO: Navigate to HomeView
                                     
                                 } else {
                                     alertToast.show = true
@@ -205,9 +205,9 @@ struct LoginView: View {
         case .registerPending:
             return "注册查分器账号"
         case .loginRequesting:
-            return loginPrompt
+            return "登录到查分器"
         case .registerRequesting:
-            return registerPrompt
+            return "注册查分器账号"
         }
     }
     
