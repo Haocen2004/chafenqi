@@ -24,6 +24,10 @@ class CFQNUser: ObservableObject {
     var persisitent = CFQPersistentData()
     
     class Maimai: Codable {
+        var isEmpty: Bool {
+            return self.info.isEmpty || self.bestScore.isEmpty || self.recentScore.isEmpty
+        }
+        
         var info: MaimaiUserInfo
         var bestScore: MaimaiBestScoreEntries
         var recentScore: MaimaiRecentScoreEntries
@@ -45,6 +49,10 @@ class CFQNUser: ObservableObject {
     }
     
     class Chunithm: Codable {
+        var isEmpty: Bool {
+            return self.info.isEmpty || self.bestScore.isEmpty || self.recentScore.isEmpty
+        }
+        
         var info: ChunithmUserInfo
         var bestScore: ChunithmBestScoreEntries
         var recentScore: ChunithmRecentScoreEntries

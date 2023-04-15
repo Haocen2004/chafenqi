@@ -10,6 +10,10 @@ import Foundation
 struct CFQData {
     struct Maimai {
         struct UserInfo: Codable {
+            var isEmpty: Bool {
+                return self.uid == -1 || nickname == "" || self.rating == -1
+            }
+            
             var uid: Int
             var nickname: String
             var trophy: String
@@ -23,7 +27,7 @@ struct CFQData {
             var createdAt: String
             var updatedAt: String
             
-            static let empty = UserInfo(uid: 0, nickname: "", trophy: "", rating: 0, maxRating: 0, star: 0, charUrl: "", gradeUrl: "", playCount: 0, stats: "", createdAt: "", updatedAt: "")
+            static let empty = UserInfo(uid: -1, nickname: "", trophy: "", rating: -1, maxRating: 0, star: 0, charUrl: "", gradeUrl: "", playCount: 0, stats: "", createdAt: "", updatedAt: "")
         }
         
         struct BestScoreEntry: Codable {
@@ -80,6 +84,10 @@ struct CFQData {
     
     struct Chunithm {
         struct UserInfo: Codable {
+            var isEmpty: Bool {
+                return self.uid == -1 || nickname == "" || rating == -1
+            }
+            
             var uid: Int
             var nickname: String
             var trophy: String
@@ -99,7 +107,7 @@ struct CFQData {
             var createdAt: String
             var updatedAt: String
             
-            static let empty = UserInfo(uid: 0, nickname: "", trophy: "", plate: "", dan: 0, ribbon: 0, rating: 0, maxRating: 0, overpower_raw: 0, overpower_percent: 0, lastPlayDate: 0, charUrl: "", friendCode: "", currentGold: 0, totalGold: 0, playCount: 0, createdAt: "", updatedAt: "")
+            static let empty = UserInfo(uid: -1, nickname: "", trophy: "", plate: "", dan: 0, ribbon: 0, rating: -1, maxRating: 0, overpower_raw: 0, overpower_percent: 0, lastPlayDate: 0, charUrl: "", friendCode: "", currentGold: 0, totalGold: 0, playCount: 0, createdAt: "", updatedAt: "")
         }
         
         struct BestScoreEntry: Codable {
