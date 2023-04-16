@@ -10,7 +10,7 @@ import AlertToast
 
 struct CommentDetail: View {
     @ObservedObject var toastManager = AlertToastManager.shared
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State var from: Int = 0
     

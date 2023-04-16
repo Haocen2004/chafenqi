@@ -246,3 +246,158 @@ typealias ChunithmBestScoreEntries = [CFQData.Chunithm.BestScoreEntry]
 typealias ChunithmRecentScoreEntries = [CFQData.Chunithm.RecentScoreEntry]
 typealias ChunithmDeltaEntries = [CFQData.Chunithm.DeltaEntry]
 typealias ChunithmExtras = CFQData.Chunithm.Extras
+
+protocol CFQChunithmCustomConvertable {
+    func getGrade(rankIndex: Int) -> String
+}
+protocol CFQMaimaiCustomConvertalbe {
+    func getRankMultiplier(achievements: Double) -> Double
+}
+
+extension CFQChunithmCustomConvertable {
+    func getGrade(rankIndex: Int) -> String {
+        switch rankIndex {
+        case 0:
+            return "D"
+        case 1:
+            return "C"
+        case 2:
+            return "B"
+        case 3:
+            return "BB"
+        case 4:
+            return "BBB"
+        case 5:
+            return "A"
+        case 6:
+            return "AA"
+        case 7:
+            return "AAA"
+        case 8:
+            return "S"
+        case 9:
+            return "S+"
+        case 10:
+            return "SS"
+        case 11:
+            return "SS+"
+        case 12:
+            return "SSS"
+        case 13:
+            return "SSS+"
+        default:
+            return "F"
+        }
+    }
+}
+extension CFQMaimaiCustomConvertalbe {
+    func getRankMultiplier(achievements: Double) -> Double {
+        switch achievements {
+        case ..<50:
+            return 4
+        case 50..<60:
+            return 5
+        case 60..<70:
+            return 6
+        case 70..<75:
+            return 7
+        case 75..<80:
+            return 7.5
+        case 80..<90:
+            return 8.5
+        case 90..<94:
+            return 9.5
+        case 94..<97:
+            return 10.5
+        case 97..<98:
+            return 12.5
+        case 98..<99:
+            return 12.7
+        case 99..<99.5:
+            return 13
+        case 99.5..<100:
+            return 13.2
+        case 100..<100.5:
+            return 13.5
+        case 100.5...:
+            return 14
+        default:
+            return 0
+        }
+    }
+}
+
+extension CFQData.Chunithm.BestScoreEntry: CFQChunithmCustomConvertable {}
+extension CFQData.Chunithm.BestScoreEntry {
+    func getStatus() -> String {
+        if !self.clear.isEmpty {
+            if self.full_combo == "fullcombo" {
+                return "FC"
+            } else if self.full_combo == "alljustice" {
+                return "AJ"
+            } else {
+                return "Clear"
+            }
+        } else {
+            return "Clear"
+        }
+    }
+}
+
+extension CFQData.Chunithm.RecentScoreEntry: CFQChunithmCustomConvertable {}
+
+extension CFQData.Maimai.BestScoreEntry: CFQMaimaiCustomConvertalbe {}
+extension CFQData.Maimai.BestScoreEntry {
+    func getStatus() -> String {
+        self.fc.isEmpty ? "" : self.fc.uppercased()
+    }
+    
+    func getSyncStatus() -> String {
+        self.fs.isEmpty ? "" : self.fs.uppercased()
+    }
+    
+    func rating(songs: Array<MaimaiSongData>) -> Int {
+        let song = songs.first {
+            $0.title == self.title
+        }
+        guard let thisSong = song else { return -1 }
+        guard self.level_index < 5 else { return -1 }
+        
+        let constant = thisSong.constant[self.level_index]
+        let score = min(100.5, self.achievements)
+        let rankMultiplier = getRankMultiplier(achievements: self.achievements)
+        return Int((constant * score * rankMultiplier).rounded(.down))
+    }
+}
+
+extension CFQData.Maimai.RecentScoreEntry: CFQMaimaiCustomConvertalbe {}
+extension CFQData.Maimai.RecentScoreEntry {
+    func rating(songs: Array<MaimaiSongData>) -> Int {
+        let song = songs.first {
+            $0.title == self.title
+        }
+        var level_index: Int {
+            switch self.difficulty.lowercased() {
+            case "basic":
+                return 0
+            case "advanced":
+                return 1
+            case "expert":
+                return 2
+            case "master":
+                return 3
+            case "re:master":
+                return 4
+            default:
+                return 0
+            }
+        }
+        guard let thisSong = song else { return -1 }
+        guard level_index < 5 else { return -1 }
+        
+        let constant = thisSong.constant[level_index]
+        let score = min(100.5, self.achievements)
+        let rankMultiplier = getRankMultiplier(achievements: self.achievements)
+        return Int((constant * score * rankMultiplier).rounded(.down))
+    }
+}

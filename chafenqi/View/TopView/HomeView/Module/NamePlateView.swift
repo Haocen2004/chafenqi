@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NamePlateView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State private var nameplateChuniColorTop = Color(red: 254, green: 241, blue: 65)
     @State private var nameplateChuniColorBottom = Color(red: 243, green: 200, blue: 48)
@@ -65,7 +65,7 @@ struct NamePlateView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
-                            Text(user.displayName)
+                            Text(user.currentMode == 0 ? user.chunithm.info.nickname : user.maimai.info.nickname)
                                 .foregroundColor(.black)
                                 .font(.system(size: 25))
                                 .bold()
@@ -92,7 +92,7 @@ struct NamePlateView: View {
                                 HStack {
                                     Text("Rating")
                                     if (user.currentMode == 0) {
-                                        Text("\(user.chunithm?.profile.getRating() ?? 0.0, specifier: "%.2f") (\(user.chunithm?.profile.getMaximumRating() ?? 0.0, specifier: "%.2f"))")
+                                        Text("\(user.chunithm.info.rating, specifier: "%.2f") (\(user.chunithm.info.maxRating, specifier: "%.2f"))")
                                             .bold()
                                     } else {
                                         Text(verbatim: "\(user.maimai?.custom.rawRating ?? 0)")
@@ -131,13 +131,14 @@ struct NamePlateView: View {
                                     if (user.currentMode == 0) {
                                         Text("OVERPOWER")
                                         
-                                        Text("\(user.chunithm?.custom.overpower ?? 0.0, specifier: "%.2f")")
+                                        Text("\(user.chunithm.info.overpower_raw, specifier: "%.2f")")
                                             .bold()
                                     } else {
                                         
                                         Text("排名")
                                         
-                                        Text("#\(user.maimai?.custom.nationalRanking ?? 0)")
+                                        // TODO: Fix ranking
+                                        Text("#0")
                                             .bold()
                                     }
                                 }
@@ -147,10 +148,10 @@ struct NamePlateView: View {
                                 HStack {
                                     if (user.currentMode == 0) {
                                         Text("更新于")
-                                        Text(user.chunithm?.custom.lastUpdateDate ?? "暂无数据")
+                                        Text(user.chunithm.info.updatedAt)
                                     } else {
                                         Text("更新于")
-                                        Text(user.maimai?.custom.lastUpdateDate ?? "暂无数据")
+                                        Text(user.maimai.info.updatedAt)
                                     }
                                 }
                             }

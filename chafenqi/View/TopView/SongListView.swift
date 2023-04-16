@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SongListView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State private var searchText = ""
     
@@ -157,12 +157,12 @@ struct SongListView: View {
         guard user.currentMode == 1 else { return nil }
         
         
-        var songs = user.data.maimai.songlist
+        var songs = user.persistent.maimai.songs
         
         if (showingPlayed) {
-            let userInfo = user.maimai!.record
-            let idList = userInfo.records.compactMap { $0.musicId }
-            songs = songs.filter { idList.contains( Int($0.musicId)! ) }
+            let userInfo = user.maimai.bestScore
+            let idList = userInfo.compactMap { $0.title }
+            songs = songs.filter { idList.contains( $0.title ) }
         }
         
         if searchText.isEmpty {
@@ -224,13 +224,13 @@ struct SongListView: View {
     var searchChunithmResults: Array<ChunithmSongData>? {
         guard user.currentMode == 0 else { return nil }
         
-        var songs = user.data.chunithm.songs
+        var songs = user.persistent.chunithm.songs
         
         if (showingPlayed) {
             
-            let userInfo = user.chunithm!.profile
-            let idList = userInfo.records.best.compactMap { $0.musicId }
-            songs = songs.filter { idList.contains( $0.musicId ) }
+            let userInfo = user.chunithm.bestScore
+            let idList = userInfo.compactMap { $0.idx }
+            songs = songs.filter { idList.contains( String($0.musicId) ) }
             
         }
         

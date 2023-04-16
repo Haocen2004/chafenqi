@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CommentComposerView: View {
     @ObservedObject var toastManager = AlertToastManager.shared
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @State var comments = []
     @State var from: Int
@@ -19,7 +19,7 @@ struct CommentComposerView: View {
     @Binding var showingComposer: Bool
     
     var body: some View {
-        let displayName = user.nickname.isEmpty ? user.username : user.nickname
+        let displayName = user.username
         
         NavigationView {
             VStack(alignment: .leading) {
@@ -43,7 +43,7 @@ struct CommentComposerView: View {
                             let result = await CommentHelper.postComment(
                                 message: message,
                                 sender: user.username,
-                                nickname: user.nickname,
+                                nickname: user.username,
                                 mode: user.currentMode,
                                 musicId: from,
                                 reply: reply ?? -1

@@ -11,7 +11,7 @@ import CachedAsyncImage
 
 struct ChunithmDetailView: View {
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -27,9 +27,8 @@ struct ChunithmDetailView: View {
     
     @State private var chartImage: UIImage = UIImage()
     @State private var chartImageView = Image(systemName: "magnifyingglass")
-    
-    @State private var userInfo = ChunithmUserData.shared
-    @State private var scoreEntries = [Int: ScoreEntry]()
+
+    @State private var scoreEntries = [Int: CFQData.Chunithm.BestScoreEntry]()
     
     @State private var comments: Array<Comment> = []
     @State private var showingComposer = false
@@ -194,7 +193,7 @@ struct ChunithmDetailView: View {
                     .onAppear {
                         Task {
                             do {
-                                let map = try JSONDecoder().decode(Dictionary<String, String>.self, from: user.data.chunithm.mapData)
+                                let map = try JSONDecoder().decode(Dictionary<String, String>.self, from: user.persistent.chunithm.mapData)
                                 webChartId = try ChartIdConverter.getWebChartId(musicId: song.musicId, map: map)
                                 chartImage = try await ChartImageGrabber.downloadChartImage(webChartId: webChartId, diff: difficulty[selectedDifficulty]!)
                                 chartImageView = Image(uiImage: chartImage)
@@ -286,15 +285,15 @@ struct ChunithmDetailView: View {
             }
             .onAppear {
                 Task {
-                    if(user.didLogin) {
-                        userInfo = user.chunithm!.profile
-                        var scores = userInfo.records.best.filter {
-                            $0.musicId == song.musicId
+                    if(user.didLogin && !user.chunithm.isEmpty) {
+                        let userScores: ChunithmBestScoreEntries = user.chunithm.bestScore
+                        var scores = userScores.filter {
+                            $0.idx == String(song.musicId)
                         }
-                        scores.sort {
-                            $0.levelIndex < $1.levelIndex
+                        scores.sort { lhs, rhs in
+                            lhs.level_index < rhs.level_index
                         }
-                        scoreEntries = Dictionary(uniqueKeysWithValues: scores.map { ($0.levelIndex, $0) })
+                        scoreEntries = Dictionary(uniqueKeysWithValues: scores.map { ($0.level_index, $0) })
                         loadingScore = false
                     }
                     
@@ -329,7 +328,7 @@ struct ChunithmDetailView: View {
     
     struct ScoreCardView: View {
         var index: Int
-        var scoreEntries: [Int: ScoreEntry]
+        var scoreEntries: [Int: CFQData.Chunithm.BestScoreEntry]
         var song: ChunithmSongData
         
         @State private var showingDetail = false
@@ -356,13 +355,13 @@ struct ChunithmDetailView: View {
                         Spacer()
                         if (exists && showingDetail) {
                             Text(scoreEntries[index]!.getStatus())
-                            Text(scoreEntries[index]!.getGrade())
+                            Text(scoreEntries[index]!.getGrade(rankIndex: scoreEntries[index]!.rank_index))
                         }
-                        Text(exists ? String(scoreEntries[index]!.score) : "尚未游玩")
+                        Text(exists ? String(scoreEntries[index]!.highscore) : "尚未游玩")
                             .bold()
-                        if (exists && showingDetail) {
-                            Text("\(scoreEntries[index]!.rating, specifier: "%.2f")")
-                        }
+//                        if (exists && showingDetail) {
+//                            Text("\(scoreEntries[index]!.rating, specifier: "%.2f")")
+//                        }
                         Image(systemName: "chevron.backward")
                             .rotationEffect(Angle(degrees: rotationAngle))
                             .onTapGesture {

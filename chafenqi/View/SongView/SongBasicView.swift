@@ -94,7 +94,7 @@ let tempSongData = try! JSONDecoder().decode(ChunithmSongData.self, from: data!)
 struct SongBasicView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     var maimaiSong: MaimaiSongData = tempMaimaiSong
     var chunithmSong: ChunithmSongData = tempSongData

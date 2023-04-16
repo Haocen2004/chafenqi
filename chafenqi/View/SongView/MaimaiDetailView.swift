@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct MaimaiDetailView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -25,8 +25,7 @@ struct MaimaiDetailView: View {
     
     @State private var showingCalc = false
     
-    @State private var userInfo = MaimaiPlayerRecord.shared
-    @State private var scoreEntries = [Int: MaimaiRecordEntry]()
+    @State private var scoreEntries = [Int: CFQData.Maimai.BestScoreEntry]()
     @State private var chartStats: Array<MaimaiChartStat> = []
     
     var song: MaimaiSongData
@@ -195,17 +194,15 @@ struct MaimaiDetailView: View {
             }
             .onAppear {
                 Task {
-                    if(user.didLogin) {
-                        userInfo = user.maimai!.record
-
-                        var scores = userInfo.records.filter {
-                            $0.musicId == Int(song.musicId)!
+                    if(user.didLogin && !user.maimai.isEmpty) {
+                        var scores = user.maimai.bestScore.filter {
+                            $0.title == song.title
                         }
                         scores.sort {
-                            $0.levelIndex < $1.levelIndex
+                            $0.level_index < $1.level_index
                         }
-                        scoreEntries = Dictionary(uniqueKeysWithValues: scores.map { ($0.levelIndex, $0) })
-                        chartStats = user.data.maimai.chartStats.charts[song.musicId] ?? []
+                        scoreEntries = Dictionary(uniqueKeysWithValues: scores.map { ($0.level_index, $0) })
+                        chartStats = user.persistent.maimai.chartStats.charts[song.musicId] ?? []
                     }
                     
                     loadingComments = true
@@ -241,7 +238,7 @@ struct MaimaiDetailView: View {
     
     struct MaimaiScoreCardView: View {
         var index: Int
-        var scoreEntries: [Int: MaimaiRecordEntry]
+        var scoreEntries: [Int: CFQData.Maimai.BestScoreEntry]
         var song: MaimaiSongData
         var chartStat: MaimaiChartStat?
         
@@ -286,7 +283,7 @@ struct MaimaiDetailView: View {
                         if (exists && showingDetail) {
                             Text(scoreEntries[index]!.getSyncStatus())
                             Text(scoreEntries[index]!.getStatus())
-                            Text(scoreEntries[index]!.getRateString())
+                            Text(scoreEntries[index]!.rate.uppercased())
                         }
                         Text(exists ? "\(scoreEntries[index]!.achievements, specifier: "%.4f")%" : "尚未游玩")
                             .bold()
@@ -309,7 +306,7 @@ struct MaimaiDetailView: View {
                                 Text("谱师：\(song.charts[index].charter)")
                                     .lineLimit(1)
                                 Spacer()
-                                Text("Rating：\(exists ? String(scoreEntries[index]!.rating) : "-")")
+                                // Text("Rating：\(exists ? String(scoreEntries[index]!.) : "-")")
                             }
                             .padding([.horizontal])
                             

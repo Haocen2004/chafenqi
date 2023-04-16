@@ -29,6 +29,14 @@ class CFQNUser: ObservableObject {
     var persistent = CFQPersistentData()
     
     class Maimai: Codable {
+        class Rating: Codable {
+            var past: Int
+            var current: Int
+            
+            var pastSlice: [CFQData.Maimai.BestScoreEntry]
+            var currentSlice: [CFQData.Maimai.BestScoreEntry]
+        }
+        
         var isEmpty: Bool {
             return self.info.isEmpty || self.bestScore.isEmpty || self.recentScore.isEmpty
         }

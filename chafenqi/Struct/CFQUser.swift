@@ -80,7 +80,7 @@ class CFQUser: ObservableObject {
     }
     
     private func calculateMaimaiData() {
-        let songlist = self.data.maimai.songlist
+        let songlist = self.data.maimai.songs
         let records = self.maimai!.record.records
         let ranking = self.data.maimai.ranking
         
@@ -91,8 +91,8 @@ class CFQUser: ObservableObject {
         self.maimai!.custom.currentRating = currentSlice.reduce(0) { $0 + $1.rating }
         self.maimai!.custom.rawRating = self.maimai!.custom.pastRating + self.maimai!.custom.currentRating
         
-        self.maimai!.custom.pastSlice = Array(self.maimai!.record.getPastSlice(songData: self.data.maimai.songlist))
-        self.maimai!.custom.currentSlice = Array(self.maimai!.record.getCurrentSlice(songData: self.data.maimai.songlist))
+        self.maimai!.custom.pastSlice = Array(self.maimai!.record.getPastSlice(songData: self.data.maimai.songs))
+        self.maimai!.custom.currentSlice = Array(self.maimai!.record.getCurrentSlice(songData: self.data.maimai.songs))
         
         self.maimai!.custom.totalCharts = songlist.reduce(0) {
             $0 + $1.charts.count
@@ -123,7 +123,7 @@ class CFQUser: ObservableObject {
         }
         
         for entry in self.maimai!.recent {
-            let song = self.data.maimai.songlist.filter {
+            let song = self.data.maimai.songs.filter {
                 $0.title == entry.title
             }.first
             

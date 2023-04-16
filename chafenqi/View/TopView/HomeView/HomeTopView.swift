@@ -8,133 +8,80 @@
 import SwiftUI
 
 struct HomeTopView: View {
-    @AppStorage("userToken") var token = ""
-    @AppStorage("userMaimaiCache") var maimaiCache = Data()
-    @AppStorage("userChunithmCache") var chunithmCache = Data()
-    
-    @ObservedObject var user: CFQUser
-    
-    @State private var loadStatus: LoadStatus = .loading(hint: "加载中...")
+    @ObservedObject var user: CFQNUser
     
     var body: some View {
         Group {
-            if (user.didLogin) {
-                switch (loadStatus) {
-                case .complete:
-                    ScrollView {
-                        NamePlateView(user: user)
+            ScrollView {
+                NamePlateView(user: user)
+                Group {
+                    HStack {
+                        Text("最近动态")
+                            .font(.system(size: 20))
+                            .bold()
+                        Spacer()
                         
-                        Group {
-                            HStack {
-                                Text("最近动态")
-                                    .font(.system(size: 20))
-                                    .bold()
-                                Spacer()
-                                
-                                NavigationLink {
-                                    RecentView(user: user)
-                                } label: {
-                                    Text("显示全部")
-                                        .font(.system(size: 18))
-                                }
-                                .disabled(user.currentMode == 0 ? user.chunithm == nil : user.maimai == nil)
-                            }
-                            .padding(.horizontal)
-                            
-                            
-                            HStack {
-                                if ((user.currentMode == 1 && user.maimai == nil) || (user.currentMode == 0 && user.chunithm == nil)) {
-                                    Text("暂无数据")
-                                        .padding()
-                                } else {
-                                    RecentSpotlightView(user: user)
-                                }
-                            }
-                            .padding([.horizontal, .bottom])
-                            
-                            
-                        }
-                        
-                        Group {
-                            HStack {
-                                Text("Rating分析")
-                                    .font(.system(size: 20))
-                                    .bold()
-                                Spacer()
-                                
-                                NavigationLink {
-                                    RatingDetailView(user: user)
-                                } label: {
-                                    Text("显示全部")
-                                        .font(.system(size: 18)) 
-                                }
-                                .disabled(user.currentMode == 0 ? user.chunithm == nil : user.maimai == nil)
-                            }
-                            .padding(.horizontal)
-                            
-                            ScrollView(.horizontal) {
-                                if(user.currentMode == 1 && user.maimai != nil) {
-                                    RatingAnalysisView(user: user)
-                                }
-                            }
-                            .padding()
-                        }
-                        
-                        Group {
-                            HStack {
-                                Text("好友动态")
-                                    .font(.system(size: 20))
-                                    .bold()
-                                Spacer()
-                                
-                            }
-                            .padding(.horizontal)
-                            
-                            VStack {
-                                Text("敬请期待")
-                                    .padding(.top)
-                            }
-                            .padding([.horizontal, .bottom])
-                        }
-                    }
-                case .loading(let prompt):
-                    VStack {
-                        ProgressView()
-                            .padding()
-                        Text(prompt)
-                    }
-                case .notLogin:
-                    Text("未登录，请在设置中登录账号")
-                case .error(let errorText):
-                    VStack {
-                        Text(errorText)
-                        Button {
-                            Task {
-                                do {
-                                    loadStatus = .loading(hint: "加载中")
-                                    try await user.refresh()
-                                    
-                                    loadStatus = .complete
-                                } catch {
-                                    loadStatus = .error(errorText: "哎呀，出错了")
-                                }
-                            }
+                        NavigationLink {
+                            RecentView(user: user)
                         } label: {
-                            Text("重试")
+                            Text("显示全部")
+                                .font(.system(size: 18))
+                        }
+                        .disabled(user.currentMode == 0 ? user.chunithm.isEmpty : user.maimai.isEmpty)
+                    }
+                    .padding(.horizontal)
+                    
+                    
+                    HStack {
+                        if ((user.currentMode == 1 && user.maimai.isEmpty) || (user.currentMode == 0 && user.chunithm.isEmpty)) {
+                            Text("暂无数据")
+                                .padding()
+                        } else {
+                            RecentSpotlightView(user: user)
                         }
                     }
-                default:
-                    Text("未登录，请在设置中登录账号")
+                    .padding([.horizontal, .bottom])
                 }
-            } else {
-                Text("未登录，请在设置中登录账号")
-            }
-        }
-        .onAppear {
-            if (user.didLogin) {
-                loadStatus = .complete
-            } else {
-                loadStatus = .notLogin
+                Group {
+                    HStack {
+                        Text("Rating分析")
+                            .font(.system(size: 20))
+                            .bold()
+                        Spacer()
+                        
+                        NavigationLink {
+                            RatingDetailView(user: user)
+                        } label: {
+                            Text("显示全部")
+                                .font(.system(size: 18))
+                        }
+                        .disabled(user.currentMode == 0 ? user.chunithm.isEmpty : user.maimai.isEmpty)
+                    }
+                    .padding(.horizontal)
+                    
+                    ScrollView(.horizontal) {
+                        if(user.currentMode == 1 && !user.maimai.isEmpty) {
+                            RatingAnalysisView(user: user)
+                        }
+                    }
+                    .padding()
+                }
+                Group {
+                    HStack {
+                        Text("好友动态")
+                            .font(.system(size: 20))
+                            .bold()
+                        Spacer()
+                        
+                    }
+                    .padding(.horizontal)
+                    
+                    VStack {
+                        Text("敬请期待")
+                            .padding(.top)
+                    }
+                    .padding([.horizontal, .bottom])
+                }
             }
         }
         .navigationTitle("主页")
@@ -150,14 +97,7 @@ struct HomeTopView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     Task {
-                        do {
-                            loadStatus = .loading(hint: "加载中")
-                            try await user.refresh()
-                            
-                            loadStatus = .complete
-                        } catch {
-                            loadStatus = .error(errorText: "哎呀，出错了")
-                        }
+                        // TODO: Add refresh button
                     }
                 } label: {
                     Image(systemName: "arrow.clockwise")
