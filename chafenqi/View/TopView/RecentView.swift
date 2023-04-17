@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct RecentView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     var body: some View {
         VStack {
             if(user.didLogin) {
                 if (user.currentMode == 0) {
-                    if (user.chunithm == nil) {
+                    if (!user.chunithm.isEmpty) {
                         VStack{
                             Text("暂无最近记录")
                                 .padding()
@@ -23,18 +23,18 @@ struct RecentView: View {
                     } else {
                         Form {
                             Section {
-                                ForEach(user.chunithm!.recent.indices) { index in
+                                ForEach(user.chunithm.recentScore, id: \.playTime) { entry in
                                     NavigationLink {
-                                        RecentDetailView(user: user, chuSong: user.chunithm!.custom.recentSong[index], chuRecord: user.chunithm!.recent[index], mode: 0)
+                                        RecentDetailView(user: user, chuSong: entry.getSong(musicId: Int(entry.idx) ?? 0, songs: user.persistent.chunithm.songs), chuRecord: entry, mode: 0)
                                     } label: {
-                                        RecentBasicView(user: user, chunithmSong: user.chunithm!.custom.recentSong[index], chunithmRecord: user.chunithm!.recent[index], mode: 0)
+                                        RecentBasicView(user: user, chunithmSong: entry.getSong(musicId: Int(entry.idx) ?? 0, songs: user.persistent.chunithm.songs), chunithmRecord: entry, mode: 0)
                                     }
                                 }
                             }
                         }
                     }
                 } else {
-                    if (user.maimai == nil) {
+                    if (!user.maimai.isEmpty) {
                         VStack{
                             Text("暂无最近记录")
                                 .padding()
@@ -43,11 +43,11 @@ struct RecentView: View {
                     } else {
                         Form {
                             Section {
-                                ForEach(user.maimai!.recent.indices) { index in
+                                ForEach(user.maimai.recentScore, id: \.timestamp) { entry in
                                     NavigationLink {
-                                        RecentDetailView(user: user, maiSong: user.maimai!.custom.recentSong[index], maiRecord: user.maimai!.recent[index], mode: 1)
+                                        RecentDetailView(user: user, maiSong: entry.getSong(title: entry.title, songs: user.persistent.maimai.songs), maiRecord: entry, mode: 1)
                                     } label: {
-                                        RecentBasicView(user: user, maimaiSong: user.maimai!.custom.recentSong[index], maimaiRecord: user.maimai!.recent[index], mode: 1)
+                                        RecentBasicView(user: user, maimaiSong: entry.getSong(title: entry.title, songs: user.persistent.maimai.songs), maimaiRecord: entry, mode: 1)
                                     }
                                 }
                             }

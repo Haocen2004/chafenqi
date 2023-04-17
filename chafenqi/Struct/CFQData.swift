@@ -44,6 +44,8 @@ struct CFQData {
             var idx: String
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = BestScoreEntry(title: "", level: "", level_index: 0, type: "", achievements: 0, dxScore: 0, rate: "", fc: "", fs: "", ds: 0, idx: "", createdAt: "", updatedAt: "")
         }
         
         struct RecentScoreEntry: Codable {
@@ -67,6 +69,8 @@ struct CFQData {
             var matching_3: String
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = RecentScoreEntry(timestamp: 0, title: "", difficulty: "", achievements: 0, isNewRecord: 0, dxScore: 0, fc: "", fs: "", notes_tap: "", notes_hold: "", notes_slide: "", notes_touch: "", notes_break: "", maxCombo: "", maxSync: "", matching_1: "", matching_2: "", matching_3: "", createdAt: "", updatedAt: "")
         }
         
         struct DeltaEntry: Codable {
@@ -79,6 +83,8 @@ struct CFQData {
             var awakening: Int
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = DeltaEntry(rating: 0, playCount: 0, stats: "", dxScore: 0, achievement: 0, syncPoint: 0, awakening: 0, createdAt: "", updatedAt: "")
         }
     }
     
@@ -121,6 +127,8 @@ struct CFQData {
             var idx: String
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = BestScoreEntry(title: "", level_index: 0, highscore: 0, rank_index: 0, clear: "", full_combo: "", full_chain: "", idx: "", createdAt: "", updatedAt: "")
         }
         
         struct RecentScoreEntry: Codable {
@@ -143,6 +151,8 @@ struct CFQData {
             var notes_flick: String
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = RecentScoreEntry(playTime: 0, idx: "", title: "", difficulty: "", highscore: 0, isNewRecord: 0, fc: "", rank_index: 0, judges_critical: 0, judges_justice: 0, judges_attack: 0, judges_miss: 0, notes_tap: "", notes_hold: "", notes_slide: "", notes_air: "", notes_flick: "", createdAt: "", updatedAt: "")
         }
         
         struct DeltaEntry: Codable {
@@ -154,6 +164,8 @@ struct CFQData {
             var playCount: Int
             var createdAt: String
             var updatedAt: String
+            
+            static let empty = DeltaEntry(rating: 0, overpower_raw: 0, overpower_percent: 0, currentGold: 0, totalGold: 0, playCount: 0, createdAt: "", updatedAt: "")
         }
         
         struct Extras: Codable {
@@ -233,6 +245,13 @@ struct CFQData {
                 var updatedAt: String
             }
         }
+        
+        struct RatingEntry: Codable {
+            var title: String
+            var idx: String
+            var highscore: Int
+            var type: String
+        }
     }
 }
 
@@ -246,12 +265,15 @@ typealias ChunithmBestScoreEntries = [CFQData.Chunithm.BestScoreEntry]
 typealias ChunithmRecentScoreEntries = [CFQData.Chunithm.RecentScoreEntry]
 typealias ChunithmDeltaEntries = [CFQData.Chunithm.DeltaEntry]
 typealias ChunithmExtras = CFQData.Chunithm.Extras
+typealias ChunithmRatingEntries = [CFQData.Chunithm.RatingEntry]
 
 protocol CFQChunithmCustomConvertable {
     func getGrade(rankIndex: Int) -> String
+    func getSong(musicId: Int, songs: Array<ChunithmSongData>) -> ChunithmSongData
 }
 protocol CFQMaimaiCustomConvertalbe {
     func getRankMultiplier(achievements: Double) -> Double
+    func getSong(title: String, songs: Array<MaimaiSongData>) -> MaimaiSongData
 }
 
 extension CFQChunithmCustomConvertable {
@@ -289,6 +311,14 @@ extension CFQChunithmCustomConvertable {
             return "F"
         }
     }
+    
+    func getSong(musicId: Int, songs: Array<ChunithmSongData>) -> ChunithmSongData {
+        let data = songs.first {
+            $0.musicId == musicId
+        }
+        guard let song = data else { return tempSongData }
+        return song
+    }
 }
 extension CFQMaimaiCustomConvertalbe {
     func getRankMultiplier(achievements: Double) -> Double {
@@ -325,6 +355,14 @@ extension CFQMaimaiCustomConvertalbe {
             return 0
         }
     }
+    
+    func getSong(title: String, songs: Array<MaimaiSongData>) -> MaimaiSongData {
+        let data = songs.first {
+            $0.title == title
+        }
+        guard let song = data else { return tempMaimaiSong }
+        return song
+    }
 }
 
 extension CFQData.Chunithm.BestScoreEntry: CFQChunithmCustomConvertable {}
@@ -345,6 +383,10 @@ extension CFQData.Chunithm.BestScoreEntry {
 }
 
 extension CFQData.Chunithm.RecentScoreEntry: CFQChunithmCustomConvertable {}
+
+extension CFQData.Chunithm.RatingEntry {
+    
+}
 
 extension CFQData.Maimai.BestScoreEntry: CFQMaimaiCustomConvertalbe {}
 extension CFQData.Maimai.BestScoreEntry {

@@ -44,6 +44,7 @@
 		BF572E1329A5E37A00E9811B /* RecentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF572E1129A5E37A00E9811B /* RecentDetailView.swift */; };
 		BF572E1529A5E39D00E9811B /* ChunithmRecentRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF572E1429A5E39D00E9811B /* ChunithmRecentRecord.swift */; };
 		BF572E1729A5E3A700E9811B /* MaimaiRecentRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF572E1629A5E3A700E9811B /* MaimaiRecentRecord.swift */; };
+		BF63A9C429ED346400C8B2CF /* CFQDataShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF63A9C329ED346400C8B2CF /* CFQDataShim.swift */; };
 		BF670DE529781B0100EA2CBB /* ChunithmMiniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF670DE429781B0100EA2CBB /* ChunithmMiniView.swift */; };
 		BF6EB980298A429B003A5604 /* FilterPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6EB97F298A429B003A5604 /* FilterPanelView.swift */; };
 		BF74D20D29C387AE0099B427 /* CommentComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF74D20C29C387AE0099B427 /* CommentComposer.swift */; };
@@ -181,6 +182,7 @@
 		BF572E1129A5E37A00E9811B /* RecentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDetailView.swift; sourceTree = "<group>"; };
 		BF572E1429A5E39D00E9811B /* ChunithmRecentRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChunithmRecentRecord.swift; sourceTree = "<group>"; };
 		BF572E1629A5E3A700E9811B /* MaimaiRecentRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaimaiRecentRecord.swift; sourceTree = "<group>"; };
+		BF63A9C329ED346400C8B2CF /* CFQDataShim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFQDataShim.swift; sourceTree = "<group>"; };
 		BF670DE429781B0100EA2CBB /* ChunithmMiniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunithmMiniView.swift; sourceTree = "<group>"; };
 		BF6EB97F298A429B003A5604 /* FilterPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPanelView.swift; sourceTree = "<group>"; };
 		BF74D20C29C387AE0099B427 /* CommentComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentComposer.swift; sourceTree = "<group>"; };
@@ -433,6 +435,7 @@
 				BF3739C429C4F47B002825B4 /* CFQPersistentData.swift */,
 				BFEE528C29E87EF200F625C6 /* CFQData.swift */,
 				BFE829D429EAAD0A00DAA971 /* CFQNUser.swift */,
+				BF63A9C329ED346400C8B2CF /* CFQDataShim.swift */,
 			);
 			path = Struct;
 			sourceTree = "<group>";
@@ -873,6 +876,7 @@
 				BF571DAC29A91A2700702240 /* ChafenqiColor.swift in Sources */,
 				BFB3A29C298F7BAD00C8C3BF /* LevelBlockView.swift in Sources */,
 				BF8E054629A2A9D400079A06 /* WelcomeEndPageView.swift in Sources */,
+				BF63A9C429ED346400C8B2CF /* CFQDataShim.swift in Sources */,
 				BFBC5505298D005900A93918 /* SongBasicView.swift in Sources */,
 				BF7BC69B297C3365003A67B0 /* DataTool.swift in Sources */,
 				BFBC5507298D078000A93918 /* SongListView.swift in Sources */,

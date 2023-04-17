@@ -95,7 +95,7 @@ struct NamePlateView: View {
                                         Text("\(user.chunithm.info.rating, specifier: "%.2f") (\(user.chunithm.info.maxRating, specifier: "%.2f"))")
                                             .bold()
                                     } else {
-                                        Text(verbatim: "\(user.maimai?.custom.rawRating ?? 0)")
+                                        Text(verbatim: "\(user.maimai.shim.rawRating)")
                                             .bold()
                                     }
                                 }
@@ -105,21 +105,21 @@ struct NamePlateView: View {
                                         if (user.currentMode == 0) {
                                             Group {
                                                 Text("B")
-                                                Text("\(user.chunithm?.profile.getAvgB30() ?? 0.0, specifier: "%.2f")")
+                                                Text("\(user.chunithm.fishUserInfo.getAvgB30(), specifier: "%.2f")")
                                                     .bold()
                                                 Text("/")
                                                 Text("R")
-                                                Text("\(user.chunithm?.profile.getAvgR10() ?? 0.0, specifier: "%.2f")")
+                                                Text("\(user.chunithm.fishUserInfo.getAvgR10(), specifier: "%.2f")")
                                                     .bold()
                                             }
                                         } else {
                                             Group {
                                                 Text("P")
-                                                Text(verbatim: "\(user.maimai?.custom.pastRating ?? 0)")
+                                                Text(verbatim: "\(user.maimai.shim.pastRating)")
                                                     .bold()
                                                 Text("/")
                                                 Text("N")
-                                                Text(verbatim: "\(user.maimai?.custom.currentRating ?? 0)")
+                                                Text(verbatim: "\(user.maimai.shim.currentRating)")
                                                     .bold()
                                             }
                                         }

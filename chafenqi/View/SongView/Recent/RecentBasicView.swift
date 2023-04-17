@@ -10,13 +10,13 @@ import SwiftUI
 struct RecentBasicView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
-    var maimaiSong: MaimaiSongData? = nil
-    var chunithmSong: ChunithmSongData? = nil
+    var maimaiSong: MaimaiSongData = tempMaimaiSong
+    var chunithmSong: ChunithmSongData = tempSongData
     
-    var maimaiRecord: MaimaiRecentRecord = MaimaiRecentRecord.shared
-    var chunithmRecord: ChunithmRecentRecord = ChunithmRecentRecord.shared
+    var maimaiRecord = CFQData.Maimai.RecentScoreEntry.empty
+    var chunithmRecord = CFQData.Chunithm.RecentScoreEntry.empty
     
     var mode = 0
     

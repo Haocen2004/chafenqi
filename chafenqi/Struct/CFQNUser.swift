@@ -20,6 +20,7 @@ class CFQNUser: ObservableObject {
     @AppStorage("userCurrentMode") var currentMode = 0
     
     var username = ""
+    var fishUsername = ""
     @AppStorage("JWT") var jwtToken = ""
     
     var isPremium = false
@@ -46,11 +47,14 @@ class CFQNUser: ObservableObject {
         var recentScore: MaimaiRecentScoreEntries
         var delta: MaimaiDeltaEntries
         
+        var shim: CFQDataShim.Maimai
+        
         init(jwtToken: String) async throws {
             self.info = try await MaimaiServer.fetchUserInfo(token: jwtToken)
             self.bestScore = try await MaimaiServer.fetchUserBest(token: jwtToken)
             self.recentScore = try await MaimaiServer.fetchUserRecent(token: jwtToken)
             self.delta = try await MaimaiServer.fetchUserDelta(token: jwtToken)
+            self.shim = .init()
         }
         
         init() {
@@ -58,6 +62,7 @@ class CFQNUser: ObservableObject {
             self.bestScore = []
             self.recentScore = []
             self.delta = []
+            self.shim = .init()
         }
     }
     
@@ -71,6 +76,9 @@ class CFQNUser: ObservableObject {
         var recentScore: ChunithmRecentScoreEntries
         var delta: ChunithmDeltaEntries
         var extras: ChunithmExtras
+        var rating: ChunithmRatingEntries
+        
+        var fishUserInfo: ChunithmUserData // From Diving-Fish
         
         init(jwtToken: String) async throws {
             self.info = try await ChunithmServer.fetchUserInfo(token: jwtToken)
@@ -78,6 +86,8 @@ class CFQNUser: ObservableObject {
             self.recentScore = try await ChunithmServer.fetchUserRecent(token: jwtToken)
             self.delta = try await ChunithmServer.fetchUserDelta(token: jwtToken)
             self.extras = try await ChunithmServer.fetchUserExtras(token: jwtToken)
+            self.rating = try await ChunithmServer.fetchUserRating(token: jwtToken)
+            self.fishUserInfo = .shared
         }
         
         init() {
@@ -86,6 +96,8 @@ class CFQNUser: ObservableObject {
             self.recentScore = []
             self.delta = []
             self.extras = .empty
+            self.rating = []
+            self.fishUserInfo = .shared
         }
     }
     
@@ -120,6 +132,11 @@ class CFQNUser: ObservableObject {
         }
         
         self.username = username
+        
+        // Load shim
+        if (!self.maimai.isEmpty) {
+            self.maimai.shim = .init(songs: self.persistent.maimai.songs, best: self.maimai.bestScore)
+        }
     }
     
     init() {

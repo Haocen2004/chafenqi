@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct RecentSpotlightView: View {    
-    @ObservedObject var user = CFQUser()
+    @ObservedObject var user = CFQNUser()
     
     let prompt = ["最近一首", "新纪录", "高分"]
     
     var body: some View {
         VStack {
             if (user.currentMode == 0) {
-                if (user.chunithm != nil) {
-                    let recents = [(0, user.chunithm!.recent.first), user.chunithm!.recent.getLatestNewRecord(), user.chunithm!.recent.getLatestHighscore()]
+                if (!user.chunithm.isEmpty) {
+                    let recents = [(0, user.chunithm.recentScore.first), user.chunithm!.recent.getLatestNewRecord(), user.chunithm!.recent.getLatestHighscore()]
                     ForEach(Array(recents.enumerated()), id: \.offset) { index, record in
                         let (recentIndex, entry) = record
                         if (entry != nil) {
@@ -52,7 +52,7 @@ struct RecentSpotlightView: View {
                     }
                 }
             } else {
-                if (user.maimai != nil) {
+                if (!user.maimai.isEmpty) {
                     let recents = [(0, user.maimai!.recent.first), user.maimai!.recent.getLatestNewRecord(), user.maimai!.recent.getLatestHighscore()]
                     ForEach(Array(recents.enumerated()), id: \.offset) { index, record in
                         let (recentIndex, entry) = record

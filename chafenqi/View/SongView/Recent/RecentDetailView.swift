@@ -10,13 +10,13 @@ import SwiftUI
 struct RecentDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
-    var chuSong: ChunithmSongData? = tempSongData
-    var maiSong: MaimaiSongData? = tempMaimaiSong
+    var chuSong: ChunithmSongData = tempSongData
+    var maiSong: MaimaiSongData = tempMaimaiSong
     
-    var chuRecord = ChunithmRecentRecord.shared
-    var maiRecord = MaimaiRecentRecord.shared
+    var chuRecord = CFQData.Chunithm.RecentScoreEntry.empty
+    var maiRecord = CFQData.Maimai.RecentScoreEntry.empty
     
     var mode = 0
     
@@ -318,10 +318,10 @@ struct RecentDetailView: View {
         }
             
     }
-    
+    // TODO: Fix vars
     func getCommonVar() {
         title = mode == 0 ? chuRecord.title : maiRecord.title
-        artist = mode == 0 ? chuSong!.basicInfo.artist : maiSong!.basicInfo.artist
+        artist = mode == 0 ? chuSong.basicInfo.artist : maiSong.basicInfo.artist
         playTime = mode == 0 ? chuRecord.getDateString() : maiRecord.getDateString()
         difficulty = mode == 0 ? chuRecord.diff.uppercased() : maiRecord.diff.uppercased()
         diffColor = mode == 0 ? chunithmLevelColor[chuRecord.getLevelIndex()]! : maimaiLevelColor[maiRecord.getLevelIndex()]!

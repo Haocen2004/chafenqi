@@ -117,6 +117,10 @@ struct CFQServer {
                 return ChunithmExtras.empty
             }
         }
+        
+        static func fetchUserRating(token: String) async throws -> ChunithmRatingEntries {
+            return try await fetchDataByCategory(ChunithmRatingEntries.self, game: "chunithm", category: "rating", token: token) ?? []
+        }
     }
     
     static private func fetchDataByCategory<T>(_ t: T.Type, game: String, category: String, token: String) async throws -> T? where T : Decodable {
