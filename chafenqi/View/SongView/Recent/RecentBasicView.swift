@@ -22,7 +22,7 @@ struct RecentBasicView: View {
     
     var body: some View {
         HStack() {
-            let requestURL = mode == 0 ? ChunithmDataGrabber.getSongCoverUrl(source: user.chunithmCoverSource, musicId: String(chunithmSong?.musicId ?? 0)) : MaimaiDataGrabber.getSongCoverUrl(source: user.maimaiCoverSource, coverId: getCoverNumber(id: String(maimaiSong?.musicId ?? "0")))
+            let requestURL = mode == 0 ? ChunithmDataGrabber.getSongCoverUrl(source: user.chunithmCoverSource, musicId: String(chunithmSong.musicId ?? 0)) : MaimaiDataGrabber.getSongCoverUrl(source: user.maimaiCoverSource, coverId: getCoverNumber(id: String(maimaiSong.musicId ?? "0")))
             
             
             
@@ -36,26 +36,26 @@ struct RecentBasicView: View {
                         Text(chunithmRecord.getDateString())
                             .font(.system(size: 15))
                         Spacer()
-                        Text(chunithmRecord.diff.uppercased())
+                        Text(chunithmRecord.difficulty.uppercased())
                             .foregroundColor(chunithmLevelColor[chunithmRecord.getLevelIndex()])
                     }
                     
                     Spacer()
-                    Text(chunithmSong?.title ?? "")
+                    Text(chunithmSong.title)
                         .font(.system(size: 15))
                     
                     HStack(alignment: .center) {
-                        Text(chunithmRecord.score)
+                        Text("\(chunithmRecord.highscore)")
                             .font(.system(size: 23))
                             .bold()
                             .frame(width: 110, alignment: .leading)
-                        if (chunithmRecord.fc_status != "clear") {
+                        if (chunithmRecord.fc != "clear") {
                             InfoBadge(badgeColor: chunithmRecord.getFCBadgeColor(), text: chunithmRecord.getDescribingStatus())
                         }
                     }
                 } else {
                     HStack {
-                        let diff = maimaiRecord.diff.uppercased()
+                        let diff = maimaiRecord.difficulty.uppercased()
                         
                         if(diff == "REMASTER") {
                             Text(maimaiRecord.getDateString())
@@ -71,15 +71,15 @@ struct RecentBasicView: View {
                     }
                     
                     Spacer()
-                    Text(maimaiSong?.title ?? "")
+                    Text(maimaiSong.title)
                         .font(.system(size: 18))
                     
                     HStack(alignment: .center) {
-                        Text(maimaiRecord.achievement)
+                        Text("\(maimaiRecord.achievements, specifier: "%.2f")")
                             .font(.system(size: 23))
                             .bold()
                             .frame(width: 130, alignment: .leading)
-                        if (maimaiRecord.fc_status != nil) {
+                        if (!maimaiRecord.fc.isEmpty) {
                             InfoBadge(badgeColor: maimaiRecord.getFCBadgeColor(), text: maimaiRecord.getDescribingStatus())
                         }
                     }

@@ -16,30 +16,31 @@ struct RecentSpotlightView: View {
         VStack {
             if (user.currentMode == 0) {
                 if (!user.chunithm.isEmpty) {
-                    let recents = [(0, user.chunithm.recentScore.first), user.chunithm!.recent.getLatestNewRecord(), user.chunithm!.recent.getLatestHighscore()]
+                    let recents = [(0, user.chunithm.recentScore.first), user.chunithm.recentScore.getLatestNewRecord(), user.chunithm.recentScore.getLatestHighscore()]
                     ForEach(Array(recents.enumerated()), id: \.offset) { index, record in
-                        let (recentIndex, entry) = record
-                        if (entry != nil) {
+                        let (_, entry) = record
+                        if let entry = entry {
+                            let song = entry.getSong(musicId: Int(entry.idx)!, songs: user.persistent.chunithm.songs)
                             NavigationLink {
-                                RecentDetailView(user: user, chuSong: user.chunithm!.custom.recentSong[recentIndex!], chuRecord: entry!, mode: 0)
+                                RecentDetailView(user: user, chuSong: song, chuRecord: entry, mode: 0)
                             } label: {
                                 HStack {
-                                    SongCoverView(coverURL: ChunithmDataGrabber.getSongCoverUrl(source: user.chunithmCoverSource, musicId: entry!.music_id), size: 65, cornerRadius: 5)
+                                    SongCoverView(coverURL: ChunithmDataGrabber.getSongCoverUrl(source: user.chunithmCoverSource, musicId: entry.idx), size: 65, cornerRadius: 5)
                                         .padding(.trailing, 5)
                                     Spacer()
                                     VStack {
                                         HStack {
-                                            Text(entry!.getDateString())
+                                            Text(entry.getDateString())
                                             Spacer()
                                             Text(prompt[index])
                                                 .bold()
                                         }
                                         Spacer()
                                         HStack(alignment: .bottom) {
-                                            Text(entry!.title)
+                                            Text(entry.title)
                                                 .font(.system(size: 17))
                                             Spacer()
-                                            Text(entry!.score)
+                                            Text("\(entry.highscore)")
                                                 .font(.system(size: 21))
                                                 .bold()
                                         }
@@ -53,30 +54,31 @@ struct RecentSpotlightView: View {
                 }
             } else {
                 if (!user.maimai.isEmpty) {
-                    let recents = [(0, user.maimai!.recent.first), user.maimai!.recent.getLatestNewRecord(), user.maimai!.recent.getLatestHighscore()]
+                    let recents = [(0, user.maimai.recentScore.first), user.maimai.recentScore.getLatestNewRecord(), user.maimai.recentScore.getLatestHighscore()]
                     ForEach(Array(recents.enumerated()), id: \.offset) { index, record in
-                        let (recentIndex, entry) = record
-                        if (entry != nil) {
+                        let (_, entry) = record
+                        if let entry = entry {
+                            let song = entry.getSong(title: entry.title, songs: user.persistent.maimai.songs)
                             NavigationLink {
-                                RecentDetailView(user: user, maiSong: user.maimai!.custom.recentSong[recentIndex!]!, maiRecord: entry!, mode: 1)
+                                RecentDetailView(user: user, maiSong: song, maiRecord: entry, mode: 1)
                             } label: {
                                 HStack {
-                                    SongCoverView(coverURL: MaimaiDataGrabber.getSongCoverUrl(source: user.maimaiCoverSource, coverId: getCoverNumber(id: user.maimai!.custom.recentSong[recentIndex!]!.musicId)), size: 65, cornerRadius: 5)
+                                    SongCoverView(coverURL: MaimaiDataGrabber.getSongCoverUrl(source: user.maimaiCoverSource, coverId: getCoverNumber(id: song.musicId)), size: 65, cornerRadius: 5)
                                         .padding(.trailing, 5)
                                     Spacer()
                                     VStack {
                                         HStack {
-                                            Text(entry!.getDateString())
+                                            Text(entry.getDateString())
                                             Spacer()
                                             Text(prompt[index])
                                                 .bold()
                                         }
                                         Spacer()
                                         HStack(alignment: .bottom) {
-                                            Text(entry!.title)
+                                            Text(entry.title)
                                                 .font(.system(size: 17))
                                             Spacer()
-                                            Text(entry!.achievement)
+                                            Text("\(entry.achievements)")
                                                 .font(.system(size: 21))
                                                 .bold()
                                         }

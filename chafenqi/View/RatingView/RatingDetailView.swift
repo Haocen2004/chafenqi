@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct RatingDetailView: View {
-    @ObservedObject var user: CFQUser
+    @ObservedObject var user: CFQNUser
     
     var body: some View {
         ScrollView {
             if (user.currentMode == 0) {
-                if (user.chunithm != nil) {
-                    RatingDetailChunithmView(mode: user.chunithmCoverSource, chunithm: user.chunithm!)
+                if (!user.chunithm.isEmpty) {
+                    RatingDetailChunithmView(mode: user.chunithmCoverSource, chunithm: user.chunithm)
                         .padding()
                 }
             } else {
-                if (user.maimai != nil) {
+                if (!user.maimai.isEmpty) {
                     RatingDetailMaimaiView(mode: user.maimaiCoverSource, user: user)
                         .padding()
                 }
@@ -35,7 +35,7 @@ struct RatingDetailView: View {
 
 struct RatingDetailMaimaiView: View {
     @State var mode: Int
-    @State var user: CFQUser
+    @State var user: CFQNUser
     
     @State var pastFold = false
     @State var newFold = false
@@ -43,11 +43,11 @@ struct RatingDetailMaimaiView: View {
     var body: some View {
         VStack {
             HStack {
-                Text(verbatim: "\(user.maimai!.custom.rawRating)")
+                Text(verbatim: "\(user.maimai.shim.rawRating)")
                     .font(.system(size: 30))
                     .bold()
                 Spacer()
-                Text(verbatim: "Past \(user.maimai!.custom.pastRating) / New \(user.maimai!.custom.currentRating)")
+                Text(verbatim: "Past \(user.maimai.shim.pastRating) / New \(user.maimai.shim.currentRating)")
             }
             .padding(.bottom)
             
@@ -68,8 +68,8 @@ struct RatingDetailMaimaiView: View {
             
             if (!pastFold) {
                 VStack(spacing: 15) {
-                    ForEach(Array(user.maimai!.custom.pastSlice.enumerated()), id: \.offset) { index, entry in
-                        RatingMaimaiEntryBanner(mode: mode, index: index + 1, entry: entry)
+                    ForEach(Array(user.maimai.shim.pastSlice.enumerated()), id: \.offset) { index, entry in
+                        RatingMaimaiEntryBanner(mode: mode, index: index + 1, entry: entry, songs: user.persistent.maimai.songs)
                     }
                 }
             }
@@ -91,8 +91,8 @@ struct RatingDetailMaimaiView: View {
             
             if (!newFold) {
                 VStack(spacing: 15) {
-                    ForEach(Array(user.maimai!.custom.currentSlice.enumerated()), id: \.offset) { index, entry in
-                        RatingMaimaiEntryBanner(mode: mode, index: index + 1, entry: entry)
+                    ForEach(Array(user.maimai.shim.currentSlice.enumerated()), id: \.offset) { index, entry in
+                        RatingMaimaiEntryBanner(mode: mode, index: index + 1, entry: entry, songs: user.persistent.maimai.songs)
                     }
                 }
             }
@@ -102,12 +102,13 @@ struct RatingDetailMaimaiView: View {
 
 struct RatingDetailChunithmView: View {
     @State var mode: Int
-    @State var chunithm: CFQUser.Chunithm
+    @State var user: CFQNUser
     
     @State var bestFold = false
     @State var recentFold = false
     
     var body: some View {
+        let chunithm = user.chunithm
         VStack {
             HStack(alignment: .bottom) {
                 Text("\(chunithm.profile.getRating(), specifier: "%.2f")")
@@ -136,8 +137,8 @@ struct RatingDetailChunithmView: View {
             
             if(!bestFold) {
                 VStack(spacing: 15) {
-                    ForEach(Array(chunithm.rating.records.b30.enumerated()), id: \.offset) { index, entry in
-                        RatingChunithmEntryBanner(mode: mode, index: index + 1, entry: entry)
+                    ForEach(Array(chunithm.rating.enumerated()), id: \.offset) { index, entry in
+                        RatingChunithmEntryBanner(mode: mode, index: index + 1, entry: entry, bests: chunithm.bestScore, songs: user.persistent.chunithm.songs)
                     }
                 }
             }
@@ -159,8 +160,8 @@ struct RatingDetailChunithmView: View {
             
             if(!recentFold) {
                 VStack(spacing: 15) {
-                    ForEach(Array(chunithm.rating.records.r10.enumerated()), id: \.offset) { index, entry in
-                        RatingChunithmEntryBanner(mode: mode, index: index + 1, entry: entry)
+                    ForEach(Array(chunithm.rating.enumerated()), id: \.offset) { index, entry in
+                        RatingChunithmEntryBanner(mode: mode, index: index + 1, entry: entry, bests: chunithm.bestScore, songs: user.persistent.chunithm.songs)
                     }
                 }
             }
@@ -170,25 +171,29 @@ struct RatingDetailChunithmView: View {
 
 struct RatingDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        RatingDetailView(user: CFQUser())
+        RatingDetailView(user: CFQNUser())
     }
 }
 
 struct RatingChunithmEntryBanner: View {
     @State var mode: Int
     @State var index: Int
-    @State var entry: ScoreEntry
+    @State var entry: CFQData.Chunithm.RatingEntry
+    @State var bests: ChunithmBestScoreEntries
+    @State var songs: Array<ChunithmSongData>
     
     var body: some View {
+        let song = entry.getSong(bests: bests)
+        let data = song.getSong(musicId: Int(song.idx)!, songs: songs)
         HStack {
-            SongCoverView(coverURL: ChunithmDataGrabber.getSongCoverUrl(source: mode, musicId: String(entry.musicId)), size: 50, cornerRadius: 5)
+            SongCoverView(coverURL: ChunithmDataGrabber.getSongCoverUrl(source: mode, musicId: entry.idx), size: 50, cornerRadius: 5)
                 .padding(.trailing, 5)
             Group {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("#\(index)")
                             .frame(width: 35, alignment: .leading)
-                        Text("\(entry.constant, specifier: "%.1f")/\(entry.rating, specifier: "%.2f")")
+                        Text("\(data.constant[song.level_index], specifier: "%.1f")/\(song.getRating(songs: songs), specifier: "%.2f")")
                             .bold()
                             .frame(width: 90, alignment: .leading)
                     }
@@ -199,14 +204,14 @@ struct RatingChunithmEntryBanner: View {
                 Spacer()
                 VStack(alignment: .trailing) {
                     HStack {
-                        let status = entry.getStatus()
+                        let status = song.getStatus()
                         if (status != "Clear") {
-                            Text("\(entry.getStatus())")
+                            Text("\(song.getStatus())")
                         }
-                        GradeBadgeView(grade: entry.getGrade())
+                        GradeBadgeView(grade: song.getGrade(rankIndex: song.rank_index))
                     }
                     Spacer()
-                    Text("\(entry.score)")
+                    Text("\(entry.highscore)")
                     
                 }
             }
@@ -219,18 +224,19 @@ struct RatingChunithmEntryBanner: View {
 struct RatingMaimaiEntryBanner: View {
     @State var mode: Int
     @State var index: Int
-    @State var entry: MaimaiRecordEntry
+    @State var entry: CFQData.Maimai.BestScoreEntry
+    @State var songs: Array<MaimaiSongData>
     
     var body: some View {
         HStack {
-            SongCoverView(coverURL: MaimaiDataGrabber.getSongCoverUrl(source: mode, coverId: getCoverNumber(id: String(entry.musicId))), size: 50, cornerRadius: 5)
+            SongCoverView(coverURL: MaimaiDataGrabber.getSongCoverUrl(source: mode, coverId: getCoverNumber(id: String(entry.getMusicId(songs: songs)))), size: 50, cornerRadius: 5)
                 .padding(.trailing, 5)
             Group {
                 VStack(alignment: .leading) {
                     HStack {
                         Text("#\(index)")
                             .frame(width: 35, alignment: .leading)
-                        Text("\(entry.constant, specifier: "%.1f")/\(entry.rating)")
+                        Text("\(entry.getConstant(songs: songs), specifier: "%.1f")/\(entry.getRating(songs: songs))")
                             .bold()
                             .frame(width: 90, alignment: .leading)
                     }
@@ -242,7 +248,7 @@ struct RatingMaimaiEntryBanner: View {
                 VStack(alignment: .trailing) {
                     HStack {
                         Text("\(entry.getStatus())")
-                        GradeBadgeView(grade: entry.getRateString())
+                        GradeBadgeView(grade: entry.rate)
                     }
                     Spacer()
                     Text("\(entry.achievements, specifier: "%.4f")%")

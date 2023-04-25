@@ -19,6 +19,10 @@ class CFQNUser: ObservableObject {
     
     @AppStorage("userCurrentMode") var currentMode = 0
     
+    @AppStorage("settingsRecentLogEntryCount") var entryCount = "30"
+    @AppStorage("firstTimeLaunch") var firstTime = true
+    @AppStorage("proxyDidInstallProfile") var installed = false
+    
     var username = ""
     var fishUsername = ""
     @AppStorage("JWT") var jwtToken = ""
@@ -49,12 +53,12 @@ class CFQNUser: ObservableObject {
         
         var shim: CFQDataShim.Maimai
         
-        init(jwtToken: String) async throws {
+        init(jwtToken: String, data: CFQPersistentData.Maimai) async throws {
             self.info = try await MaimaiServer.fetchUserInfo(token: jwtToken)
             self.bestScore = try await MaimaiServer.fetchUserBest(token: jwtToken)
             self.recentScore = try await MaimaiServer.fetchUserRecent(token: jwtToken)
             self.delta = try await MaimaiServer.fetchUserDelta(token: jwtToken)
-            self.shim = .init()
+            self.shim = .init(songs: data.songs, best: self.bestScore)
         }
         
         init() {
@@ -120,7 +124,7 @@ class CFQNUser: ObservableObject {
         do {
             if (!jwtToken.isEmpty) {
                 // Load from server
-                self.maimai = try await Maimai(jwtToken: self.jwtToken)
+                self.maimai = try await Maimai(jwtToken: self.jwtToken, data: self.persistent.maimai)
                 self.chunithm = try await Chunithm(jwtToken: self.jwtToken)
             } else {
                 // Load from cache
@@ -147,4 +151,52 @@ class CFQNUser: ObservableObject {
 enum CFQNUserError: Error {
     case SavingError(cause: String, from: String)
     case LoadingError(cause: String, from: String)
+}
+
+extension MaimaiRecentScoreEntries {
+    func getLatestNewRecord() -> (Int?, CFQData.Maimai.RecentScoreEntry?) {
+        let new = self.filter {
+            $0.isNewRecord == 1
+        }.sorted {
+            $0.timestamp > $1.timestamp
+        }.first
+        return (self.firstIndex {
+            $0.timestamp == new?.timestamp
+        }, new)
+    }
+    
+    func getLatestHighscore() -> (Int?, CFQData.Maimai.RecentScoreEntry?) {
+        let high = self.filter {
+            $0.achievements >= 100.0
+        }.sorted {
+            $0.achievements > $1.achievements
+        }.first
+        return (self.firstIndex {
+            $0.timestamp == high?.timestamp
+        }, high)
+    }
+}
+
+extension ChunithmRecentScoreEntries {
+    func getLatestNewRecord() -> (Int?, CFQData.Chunithm.RecentScoreEntry?) {
+        let new = self.filter {
+            $0.isNewRecord == 1
+        }.sorted {
+            $0.playTime > $1.playTime
+        }.first
+        return (self.firstIndex {
+            $0.playTime == new?.playTime
+        }, new)
+    }
+    
+    func getLatestHighscore() -> (Int?, CFQData.Chunithm.RecentScoreEntry?) {
+        let high = self.filter {
+            $0.highscore > 1000000
+        }.sorted {
+            $0.highscore > $1.highscore
+        }.first
+        return (self.firstIndex {
+            $0.playTime == high?.playTime
+        }, high)
+    }
 }

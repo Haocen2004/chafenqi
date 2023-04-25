@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct CFQData {
     struct Maimai {
@@ -320,6 +321,7 @@ extension CFQChunithmCustomConvertable {
         return song
     }
 }
+
 extension CFQMaimaiCustomConvertalbe {
     func getRankMultiplier(achievements: Double) -> Double {
         switch achievements {
@@ -380,6 +382,27 @@ extension CFQData.Chunithm.BestScoreEntry {
             return "Clear"
         }
     }
+    
+    func getRating(songs: Array<ChunithmSongData>) -> Double {
+        let entry = getSong(musicId: Int(self.idx)!, songs: songs)
+        var rating: Double {
+            switch (self.highscore) {
+            case 975000...999999:
+                return entry.constant[self.rank_index] + Double(self.highscore - 975000) / 2500 * 0.1
+            case 1000000...1004999:
+                return entry.constant[self.rank_index] + 1.0 + Double(self.highscore - 1000000) / 1000 * 0.1
+            case 1005000...1007499:
+                return entry.constant[self.rank_index] + 1.5 + Double(self.highscore - 1005000) / 500 * 0.1
+            case 1007500...1008999:
+                return entry.constant[self.rank_index] + 2.0 + Double(self.highscore - 1007500) / 100 * 0.01
+            case 1009000...1010000:
+                return entry.constant[self.rank_index] + 2.15
+            default:
+                return 0
+            }
+        }
+        return rating
+    }
 }
 
 extension CFQData.Chunithm.RecentScoreEntry: CFQChunithmCustomConvertable {}
@@ -405,6 +428,33 @@ extension CFQData.Maimai.BestScoreEntry {
         guard let thisSong = song else { return -1 }
         guard self.level_index < 5 else { return -1 }
         
+        let constant = thisSong.constant[self.level_index]
+        let score = min(100.5, self.achievements)
+        let rankMultiplier = getRankMultiplier(achievements: self.achievements)
+        return Int((constant * score * rankMultiplier).rounded(.down))
+    }
+    
+    func getMusicId(songs: Array<MaimaiSongData>) -> String {
+        let song = songs.first {
+            $0.title == self.title
+        }
+        guard let thisSong = song else { return "" }
+        return thisSong.musicId
+    }
+    
+    func getConstant(songs: Array<MaimaiSongData>) -> Double {
+        let song = songs.first {
+            $0.title == self.title
+        }
+        guard let thisSong = song else { return -1.0 }
+        return thisSong.constant[self.level_index]
+    }
+    
+    func getRating(songs: Array<MaimaiSongData>) -> Int {
+        let song = songs.first {
+            $0.title == self.title
+        }
+        guard let thisSong = song else { return -1 }
         let constant = thisSong.constant[self.level_index]
         let score = min(100.5, self.achievements)
         let rankMultiplier = getRankMultiplier(achievements: self.achievements)
@@ -441,5 +491,182 @@ extension CFQData.Maimai.RecentScoreEntry {
         let score = min(100.5, self.achievements)
         let rankMultiplier = getRankMultiplier(achievements: self.achievements)
         return Int((constant * score * rankMultiplier).rounded(.down))
+    }
+    
+    func getDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        
+        return formatter.string(from: Date(timeIntervalSince1970: TimeInterval(self.timestamp)))
+    }
+    
+    func getLevelIndex() -> Int {
+        switch difficulty {
+        case "basic":
+            return 0
+        case "advanced":
+            return 1
+        case "expert":
+            return 2
+        case "master":
+            return 3
+        case "remaster":
+            return 4
+        default:
+            return 3
+        }
+    }
+    
+    func getRate() -> String {
+        switch achievements {
+        case ..<50:
+            return "D"
+        case 50..<60:
+            return "C"
+        case 60..<70:
+            return "B"
+        case 70..<75:
+            return "BB"
+        case 75..<80:
+            return "BBB"
+        case 80..<90:
+            return "A"
+        case 90..<94:
+            return "AA"
+        case 94..<97:
+            return "AAA"
+        case 97..<98:
+            return "S"
+        case 98..<99:
+            return "S+"
+        case 99..<99.5:
+            return "SS"
+        case 99.5..<100:
+            return "SS+"
+        case 100..<100.5:
+            return "SSS"
+        case 100.5...:
+            return "SSS+"
+        default:
+            return "F"
+        }
+    }
+    
+    func getGradeBadgeColor() -> Color {
+        switch achievements {
+        case ..<80:
+            return Color.gray
+        case 80..<97:
+            return Color.gray
+        case 97...:
+            return Color.orange
+        default:
+            return Color.clear
+        }
+    }
+    
+    func getFCBadgeColor() -> Color {
+        switch (fc) {
+        case "clear":
+            return Color.green
+        case "fc", "fcplus":
+            return Color.blue
+        case "ap", "applus":
+            return Color.yellow
+        default:
+            return Color.clear
+        }
+    }
+    
+    func getDescribingStatus() -> String {
+        switch (fc) {
+        case "clear":
+            return "CLEAR"
+        case "fc":
+            return "FC"
+        case "fcplus":
+            return "FC+"
+        case "ap":
+            return "AP"
+        case "applus":
+            return "AP+"
+        default:
+            return "CLEAR"
+        }
+    }
+}
+
+extension CFQData.Chunithm.RatingEntry {
+    func getSong(bests: ChunithmBestScoreEntries) -> CFQData.Chunithm.BestScoreEntry {
+        let song = bests.first {
+            $0.idx == self.idx && $0.highscore == self.highscore
+        }
+        guard let thisSong = song else { return .empty }
+        return thisSong
+    }
+}
+
+extension CFQData.Chunithm.RecentScoreEntry {
+    func getDateString() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        
+        return formatter.string(from: Date(timeIntervalSince1970: TimeInterval(self.playTime)))
+    }
+    
+    func getLevelIndex() -> Int {
+        switch difficulty {
+        case "basic":
+            return 0
+        case "advanced":
+            return 1
+        case "expert":
+            return 2
+        case "master":
+            return 3
+        case "ultima", "ultimate":
+            return 4
+        default:
+            return 3
+        }
+    }
+    
+    func getGradeBadgeColor() -> Color {
+        switch rank_index {
+        case 0..<5:
+            return Color.gray
+        case 5..<8:
+            return Color.gray
+        case 8...:
+            return Color.orange
+        default:
+            return Color.clear
+        }
+    }
+    
+    func getFCBadgeColor() -> Color {
+        switch (fc) {
+        case "clear":
+            return Color.green
+        case "fullcombo":
+            return Color.blue
+        case "alljustice":
+            return Color.yellow
+        default:
+            return Color.clear
+        }
+    }
+    
+    func getDescribingStatus() -> String {
+        switch (fc) {
+        case "clear":
+            return "CLEAR"
+        case "fullcombo":
+            return "FC"
+        case "alljustice":
+            return "AJ"
+        default:
+            return "CLEAR"
+        }
     }
 }

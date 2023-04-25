@@ -121,6 +121,16 @@ struct CFQServer {
         static func fetchUserRating(token: String) async throws -> ChunithmRatingEntries {
             return try await fetchDataByCategory(ChunithmRatingEntries.self, game: "chunithm", category: "rating", token: token) ?? []
         }
+        
+        static func fetchChart(title: String, type: String) async throws -> Data {
+            let queries = [URLQueryItem(name: "title", value: title), URLQueryItem(name: "type", value: type)]
+            let (data, response) = try await communicateWithPayload(path: "api/chunithm/chart", method: "GET", queryItems: queries)
+            if (response.statusCode() != 200) {
+                print(response.statusCode())
+                try throwErrorByMessageData(errMessageData: data)
+            }
+            return data
+        }
     }
     
     static private func fetchDataByCategory<T>(_ t: T.Type, game: String, category: String, token: String) async throws -> T? where T : Decodable {

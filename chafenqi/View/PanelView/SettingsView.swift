@@ -15,7 +15,7 @@ struct SettingsView: View {
     
     @ObservedObject var toastManager = AlertToastManager.shared
     
-    @ObservedObject var user = CFQUser()
+    @ObservedObject var user = CFQNUser()
     
     @State private var accountName = ""
     @State private var accountPassword = ""
@@ -31,7 +31,6 @@ struct SettingsView: View {
     var bundleBuildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
     
     var body: some View {
-
         Form {
             Section {
                 HStack {
@@ -64,7 +63,7 @@ struct SettingsView: View {
             Section {
                 if (user.didLogin) {
                     TextInfoView(text: "用户名", info: user.username)
-                    TextInfoView(text: "Token", info: user.token)
+                    // TextInfoView(text: "Token", info: user.token)
                     HStack {
                         Text("当前数据来源")
                         Spacer()
@@ -77,47 +76,46 @@ struct SettingsView: View {
                     }
                     Button {
                         user.didLogin = false
-                        clearUserCache()
                     } label: {
                         Text("登出")
                             .foregroundColor(Color.red)
                     }
                 } else {
-                    if #available(iOS 15.0, *) {
-                        TextField("用户名", text: $accountName)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled(true)
-                    } else {
-                        TextField("用户名", text: $accountName)
-                            .autocapitalization(.none)
-                            .autocorrectionDisabled(true)
-                    }
-                    SecureField("密码", text: $accountPassword)
-                    HStack {
-                        Button {
-                            Task {
-                                do {
-                                    loading.toggle()
-                                    user.clear()
-                                    (_, user.token) = try await ChunithmDataGrabber.loginAs(username: accountName, password: accountPassword)
-                                    user.shouldReload = true
-                                    user.didLogin = true
-                                } catch CFQError.AuthenticationFailedError {
-                                    // TODO: Show wrong credentials toast
-                                } catch {
-                                    
-                                }
-                                loading.toggle()
-                            }
-                        } label: {
-                            Text("登录")
-                        }
-                        if (loading) {
-                            Spacer()
-                            
-                            ProgressView()
-                        }
-                    }
+                    //                    if #available(iOS 15.0, *) {
+                    //                        TextField("用户名", text: $accountName)
+                    //                            .textInputAutocapitalization(.never)
+                    //                            .autocorrectionDisabled(true)
+                    //                    } else {
+                    //                        TextField("用户名", text: $accountName)
+                    //                            .autocapitalization(.none)
+                    //                            .autocorrectionDisabled(true)
+                    //                    }
+                    //                    SecureField("密码", text: $accountPassword)
+                    //                    HStack {
+                    //                        Button {
+                    //                            Task {
+                    //                                do {
+                    //                                    loading.toggle()
+                    //                                    user.clear()
+                    //                                    (_, user.token) = try await ChunithmDataGrabber.loginAs(username: accountName, password: accountPassword)
+                    //                                    user.shouldReload = true
+                    //                                    user.didLogin = true
+                    //                                } catch CFQError.AuthenticationFailedError {
+                    //                                    // TODO: Show wrong credentials toast
+                    //                                } catch {
+                    //
+                    //                                }
+                    //                                loading.toggle()
+                    //                            }
+                    //                        } label: {
+                    //                            Text("登录")
+                    //                        }
+                    //                        if (loading) {
+                    //                            Spacer()
+                    //
+                    //                            ProgressView()
+                    //                        }
+                    //                    }
                 }
             } header: {
                 Text("账户")
@@ -219,10 +217,6 @@ struct SettingsView: View {
         }
         .navigationTitle("设置")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    func clearUserCache(){
-        user.clear()
     }
     
     func clearRecentDatabase(username: String) async throws -> Int {

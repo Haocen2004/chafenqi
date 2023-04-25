@@ -11,7 +11,7 @@ struct UpdaterHelpView: View {
     @Binding var isShowingHelp: Bool
     
     var body: some View {
-        let width: CGFloat = 350
+        // let width: CGFloat = 350
         
         // TODO: Fix Multiline issue
         VStack(alignment: .center) {
